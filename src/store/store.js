@@ -36,6 +36,16 @@ const store = createStore({
         context.dispatch("showWarningMessage", e.response.data.message[0]);
       }
     },
+    async loginUser(context, payload) {
+      try {
+        await authApi.loginUser(payload);
+      } catch (e) {
+        const message = Array.isArray(e.response.data.message)
+          ? e.response.data.message[0]
+          : e.response.data.message;
+        context.dispatch("showWarningMessage", message);
+      }
+    },
   },
   getters: {
     // Геттеры для получения данных из состояния

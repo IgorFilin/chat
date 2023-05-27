@@ -25,12 +25,12 @@ export default {
     };
   },
   methods: {
-    submitForm() {
-      // Обработка отправки формы
-      console.log("Email:", this.email);
-      console.log("Пароль:", this.password);
-
-      // Очистка полей формы
+    async submitForm() {
+      const userDate = {
+        password: this.password,
+        email: this.email,
+      };
+      await this.$store.dispatch("loginUser", userDate);
       this.email = "";
       this.password = "";
     },
