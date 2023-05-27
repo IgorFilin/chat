@@ -8,7 +8,7 @@ export const authApi = {
   registerUser(userData) {
     return instance.post("/users", userData);
   },
-  loginUser(credentials) {
-    return instance.post("/login", credentials);
+  loginUser(userData) {
+    return instance.post("/login", userData);
   },
 };
