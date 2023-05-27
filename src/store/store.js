@@ -38,7 +38,8 @@ const store = createStore({
     },
     async loginUser(context, payload) {
       try {
-        await authApi.loginUser(payload);
+        const response = await authApi.loginUser(payload);
+        context.dispatch("showWarningMessage", response.data.message);
       } catch (e) {
         const message = Array.isArray(e.response.data.message)
           ? e.response.data.message[0]

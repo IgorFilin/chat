@@ -41,6 +41,9 @@ export default {
         password: this.password,
       };
       this.$store.dispatch("registerUser", userData);
+      this.name = "";
+      this.email = "";
+      this.password = "";
     },
   },
 };
