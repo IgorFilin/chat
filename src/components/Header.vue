@@ -18,7 +18,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .header {
   background-color: #202020;
   height: 40px;

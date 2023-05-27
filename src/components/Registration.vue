@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "RegistrationComponent",
   data() {
@@ -46,10 +48,24 @@ export default {
       this.password = "";
     },
   },
+  computed: {
+    ...mapState(["isAuth"]),
+  },
+  watch: {
+    isAuth(value) {
+      if (value) this.$store.dispatch("redirect", "/main");
+    },
+  },
+  mounted() {
+    if (this.$store.state.isAuth) {
+      console.log(this.$store.state.isAuth);
+      this.$store.dispatch("redirect", "/main");
+    }
+  },
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .registration-container {
   background-color: #202020;
   padding: 20px;

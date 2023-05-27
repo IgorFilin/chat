@@ -1,15 +1,20 @@
 import { createStore } from "vuex";
 import { useToast } from "vue-toastification";
 import { authApi } from "@/api/auth";
+import router from "@/router/router.js";
 
 const toast = useToast();
 
 const store = createStore({
   state: {
+    isAuth: false,
     // Состояния вашего приложения
   },
   mutations: {
     // Мутации для изменения состояния
+    authorization(state, payload) {
+      state.isAuth = payload;
+    },
   },
   actions: {
     // Действия для выполнения асинхронных операций
@@ -39,6 +44,7 @@ const store = createStore({
     async loginUser(context, payload) {
       try {
         const response = await authApi.loginUser(payload);
+        context.commit("authorization", true);
         context.dispatch("showWarningMessage", response.data.message);
       } catch (e) {
         const message = Array.isArray(e.response.data.message)
@@ -47,10 +53,14 @@ const store = createStore({
         context.dispatch("showWarningMessage", message);
       }
     },
+    redirect(context, payload) {
+      router.push({ path: payload });
+    },
   },
   getters: {
     // Геттеры для получения данных из состояния
   },
 });
 
+window.store = store.state;
 export default store;
