@@ -1,9 +1,12 @@
 <template>
   <div class="header">
-    <button class="header-button" @click="goTo('/registration')">
-      Регистрация
-    </button>
-    <button class="header-button" @click="goTo('/login')">Логинизация</button>
+    <div>
+      <button class="header-button" @click="goTo('/registration')">
+        Регистрация
+      </button>
+      <button class="header-button" @click="goTo('/login')">Логинизация</button>
+    </div>
+    <div><button class="header-button" @click="() => {}">Выход</button></div>
   </div>
 </template>
 
@@ -23,7 +26,8 @@ export default {
   background-color: #202020;
   height: 40px;
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
+  align-items: center;
   padding: 0 20px;
 }
 
