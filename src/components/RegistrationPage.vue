@@ -21,48 +21,48 @@
   </div>
 </template>
 
-<script>
-import { mapState } from "vuex";
+<script setup>
+// import { mapState } from "vuex";
 
-export default {
-  name: "RegistrationComponent",
-  data() {
-    return {
-      name: "",
-      email: "",
-      password: "",
-    };
-  },
-  methods: {
-    async submitForm(e) {
-      // Обработка отправки формы
-      e.preventDefault();
-      const userData = {
-        name: this.name,
-        email: this.email,
-        password: this.password,
-      };
-      this.$store.dispatch("registerUser", userData);
-      this.name = "";
-      this.email = "";
-      this.password = "";
-    },
-  },
-  computed: {
-    ...mapState(["isAuth"]),
-  },
-  watch: {
-    isAuth(value) {
-      if (value) this.$store.dispatch("redirect", "/main");
-    },
-  },
-  mounted() {
-    if (this.$store.state.isAuth) {
-      console.log(this.$store.state.isAuth);
-      this.$store.dispatch("redirect", "/main");
-    }
-  },
-};
+// export default {
+//   name: "RegistrationComponent",
+//   data() {
+//     return {
+//       name: "",
+//       email: "",
+//       password: "",
+//     };
+//   },
+//   methods: {
+//     async submitForm(e) {
+//       // Обработка отправки формы
+//       e.preventDefault();
+//       const userData = {
+//         name: this.name,
+//         email: this.email,
+//         password: this.password,
+//       };
+//       this.$store.dispatch("registerUser", userData);
+//       this.name = "";
+//       this.email = "";
+//       this.password = "";
+//     },
+//   },
+//   computed: {
+//     ...mapState(["isAuth"]),
+//   },
+//   watch: {
+//     isAuth(value) {
+//       if (value) this.$store.dispatch("redirect", "/main");
+//     },
+//   },
+//   mounted() {
+//     if (this.$store.state.isAuth) {
+//       console.log(this.$store.state.isAuth);
+//       this.$store.dispatch("redirect", "/main");
+//     }
+//   },
+// };
 </script>
 
 <style scoped lang="scss">

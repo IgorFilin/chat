@@ -15,43 +15,43 @@
   </div>
 </template>
 
-<script>
-import { mapState } from "vuex";
+<script setup>
+// import { mapState } from "vuex";
 
-export default {
-  name: "LoginComponent",
-  data() {
-    return {
-      email: "",
-      password: "",
-    };
-  },
-  methods: {
-    async submitForm() {
-      const userDate = {
-        password: this.password,
-        email: this.email,
-      };
-      await this.$store.dispatch("loginUser", userDate);
-      this.email = "";
-      this.password = "";
-    },
-  },
-  computed: {
-    ...mapState(["isAuth"]),
-  },
-  watch: {
-    isAuth(value) {
-      if (value) this.$store.dispatch("redirect", "/main");
-    },
-  },
-  mounted() {
-    if (this.$store.state.isAuth) {
-      console.log(this.$store.state.isAuth);
-      this.$store.dispatch("redirect", "/main");
-    }
-  },
-};
+// export default {
+//   name: "LoginComponent",
+//   data() {
+//     return {
+//       email: "",
+//       password: "",
+//     };
+//   },
+//   methods: {
+//     async submitForm() {
+//       const userDate = {
+//         password: this.password,
+//         email: this.email,
+//       };
+//       await this.$store.dispatch("loginUser", userDate);
+//       this.email = "";
+//       this.password = "";
+//     },
+//   },
+//   computed: {
+//     ...mapState(["isAuth"]),
+//   },
+//   watch: {
+//     isAuth(value) {
+//       if (value) this.$store.dispatch("redirect", "/main");
+//     },
+//   },
+//   mounted() {
+//     if (this.$store.state.isAuth) {
+//       console.log(this.$store.state.isAuth);
+//       this.$store.dispatch("redirect", "/main");
+//     }
+//   },
+// };
 </script>
 
 <style scoped lang="scss">
