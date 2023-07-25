@@ -4,11 +4,7 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "MainPage",
-};
-</script>
+<script setup></script>
 
 <style scoped lang="scss">
 .container {
