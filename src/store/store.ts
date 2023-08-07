@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 
+import { authApi } from "@/api/auth.ts";
+
 export const useCounterStore = defineStore("userData", {
   state: () => {
     return {
@@ -8,7 +10,9 @@ export const useCounterStore = defineStore("userData", {
     } as UserType;
   },
   getters: {},
-  actions: {},
+  actions: {
+    login() {},
+  },
 });
 
 interface UserType {

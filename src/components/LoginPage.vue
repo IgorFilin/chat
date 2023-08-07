@@ -16,7 +16,12 @@
 </template>
 
 <script setup>
-// import { mapState } from "vuex";
+import { ref } from "vue";
+
+let email = ref("");
+let password = ref("");
+
+function submitForm() {}
 
 // export default {
 //   name: "LoginComponent",
