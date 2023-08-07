@@ -1,27 +1,36 @@
 <template>
   <div class="registration-container">
     <h2 class="registration-title">Логинизация</h2>
-    <form class="registration-form" @submit.prevent="submitForm">
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" v-model="email" />
-      </div>
-      <div class="form-group">
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" v-model="password" />
-      </div>
-      <button class="registration-button" type="submit">Войти</button>
-    </form>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" v-model="email" />
+    </div>
+    <div class="form-group">
+      <label for="password">Пароль:</label>
+      <input type="password" id="password" v-model="password" />
+    </div>
+    <button class="registration-button" @click="submitForm">Войти</button>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
+import { useUserStore } from "@/store/store.ts";
+import { dataLoginUser } from "@/api/typesApi";
 
 let email = ref("");
 let password = ref("");
 
-function submitForm() {}
+const store = useUserStore();
+
+async function submitForm() {
+  await store.loginAction({
+    email: email.value,
+    password: password.value,
+  } as dataLoginUser);
+  email.value = "";
+  password.value = "";
+}
 
 // export default {
 //   name: "LoginComponent",

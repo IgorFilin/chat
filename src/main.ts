@@ -16,3 +16,6 @@ app.use(pinia);
 app.use(router);
 app.use(Toast, options);
 app.mount("#app");
+
+// @ts-ignore
+window.store = mapStores();
