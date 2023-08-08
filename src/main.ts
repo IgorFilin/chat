@@ -18,4 +18,4 @@ app.use(Toast, options);
 app.mount("#app");
 
 // @ts-ignore
-window.store = mapStores();
+window.store = pinia;

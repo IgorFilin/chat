@@ -3,11 +3,16 @@
     <h2 class="registration-title">Логинизация</h2>
     <div class="form-group">
       <label for="email">Email:</label>
-      <input type="email" id="email" v-model="email" />
+      <input autocomplete="on" auto type="email" id="email" v-model="email" />
     </div>
     <div class="form-group">
       <label for="password">Пароль:</label>
-      <input type="password" id="password" v-model="password" />
+      <input
+        autocomplete="on"
+        type="password"
+        id="password"
+        v-model="password"
+      />
     </div>
     <button class="registration-button" @click="submitForm">Войти</button>
   </div>
@@ -16,7 +21,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useUserStore } from "@/store/store.ts";
-import { dataLoginUser } from "@/api/typesApi";
+import { LoginUserType } from "@/api/typesApi";
 
 let email = ref("");
 let password = ref("");
@@ -27,7 +32,7 @@ async function submitForm() {
   await store.loginAction({
     email: email.value,
     password: password.value,
-  } as dataLoginUser);
+  } as LoginUserType);
   email.value = "";
   password.value = "";
 }

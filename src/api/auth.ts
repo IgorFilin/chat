@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+import { LoginUserType, RegisterUserType, ResponseLoginType } from "./typesApi";
 
 const instance = axios.create({
   baseURL: "http://localhost:3000/",
@@ -7,10 +8,10 @@ const instance = axios.create({
 } as any);
 
 export const authApi = {
-  registerUser(userData: any) {
-    return instance.post("/user/registration", userData);
+  registerUser(userData: RegisterUserType) {
+    return instance.post<AxiosResponse>("/user/registration", userData);
   },
-  loginUser(userData: any) {
-    return instance.post("/user/login", userData);
+  loginUser(userData: LoginUserType) {
+    return instance.post<ResponseLoginType>("/user/login", userData);
   },
 };

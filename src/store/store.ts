@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { authApi } from "@/api/auth.ts";
-import { dataLoginUser } from "@/api/typesApi";
+import { LoginUserType } from "@/api/typesApi";
 
 export const useUserStore: any = defineStore("userData", {
   state: () => {
@@ -12,12 +12,12 @@ export const useUserStore: any = defineStore("userData", {
   },
   getters: {},
   actions: {
-    async loginAction(data: dataLoginUser) {
+    async loginAction(data: LoginUserType) {
       try {
         const result = await authApi.loginUser(data);
         console.log("result", result);
         this.messages = result.data.message;
-        this.name = "name";
+        this.name = result.data.name;
       } catch (error: any) {
         console.log(error.response.data.message);
       }
