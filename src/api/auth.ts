@@ -14,4 +14,7 @@ export const authApi = {
   loginUser(userData: LoginUserType) {
     return instance.post<ResponseLoginType>("/user/login", userData);
   },
+  auth() {
+    return instance.get("user/auth");
+  },
 };

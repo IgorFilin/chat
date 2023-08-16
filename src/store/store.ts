@@ -11,6 +11,7 @@ export const useUserStore: any = defineStore("userData", {
     return {
       name: "",
       isAdmin: null,
+      isAuth: false,
       messages: "" as string | undefined,
     } as UserType;
   },
@@ -28,6 +29,18 @@ export const useUserStore: any = defineStore("userData", {
         }
       } finally {
         toast(this.messages);
+        this.auth();
+      }
+    },
+    async auth() {
+      try {
+        const result = await authApi.auth();
+        this.isAuth = result.data.isAuth;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          const err = error as AxiosError<{ message: string }>;
+          this.messages = err.response ? err.response?.data.message : "Ошибка";
+        }
       }
     },
   },
@@ -36,5 +49,6 @@ export const useUserStore: any = defineStore("userData", {
 interface UserType {
   name: string;
   isAdmin: boolean | null;
+  isAuth: boolean;
   messages: string;
 }

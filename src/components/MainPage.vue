@@ -4,7 +4,19 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { onMounted } from "vue";
+import { useUserStore } from "@/store/store.ts";
+import router from "@/router/router";
+
+const store = useUserStore();
+
+onMounted(() => {
+  if (!store.isAuth) {
+    router.push({ path: "/login" });
+  }
+});
+</script>
 
 <style scoped lang="scss">
 .container {

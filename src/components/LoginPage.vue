@@ -19,9 +19,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onUpdated, ref } from "vue";
 import { useUserStore } from "@/store/store.ts";
 import { LoginUserType } from "@/api/typesApi";
+import router from "@/router/router";
 
 let email = ref("");
 let password = ref("");
@@ -36,41 +37,11 @@ async function submitForm() {
   email.value = "";
   password.value = "";
 }
-
-// export default {
-//   name: "LoginComponent",
-//   data() {
-//     return {
-//       email: "",
-//       password: "",
-//     };
-//   },
-//   methods: {
-//     async submitForm() {
-//       const userDate = {
-//         password: this.password,
-//         email: this.email,
-//       };
-//       await this.$store.dispatch("loginUser", userDate);
-//       this.email = "";
-//       this.password = "";
-//     },
-//   },
-//   computed: {
-//     ...mapState(["isAuth"]),
-//   },
-//   watch: {
-//     isAuth(value) {
-//       if (value) this.$store.dispatch("redirect", "/main");
-//     },
-//   },
-//   mounted() {
-//     if (this.$store.state.isAuth) {
-//       console.log(this.$store.state.isAuth);
-//       this.$store.dispatch("redirect", "/main");
-//     }
-//   },
-// };
+onUpdated(() => {
+  if (store.isAuth) {
+    router.push({ path: "/main" });
+  }
+});
 </script>
 
 <style scoped lang="scss">
