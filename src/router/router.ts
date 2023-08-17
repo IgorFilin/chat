@@ -18,7 +18,9 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const store = useUserStore();
 
-  await store.auth();
+  if (!store.isAuth) {
+    await store.auth();
+  }
 
   if (!store.isAuth && to.path === "/main") {
     next({ path: "/login" });

@@ -18,6 +18,8 @@ import router from "@/router/router";
 function goTo(route: string) {
   router.push(route);
 }
+
+function onExitAccount() {}
 </script>
 
 <style scoped lang="scss">
