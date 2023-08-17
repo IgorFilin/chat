@@ -5,17 +5,15 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
 import { useUserStore } from "@/store/store.ts";
 import router from "@/router/router";
 
 const store = useUserStore();
 
-onMounted(() => {
-  if (!store.isAuth) {
-    router.push({ path: "/login" });
-  }
-});
+// if (!store.isAuth) {
+//   debugger;
+//   router.push("/login");
+// }
 </script>
 
 <style scoped lang="scss">

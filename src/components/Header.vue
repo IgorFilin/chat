@@ -6,19 +6,18 @@
       </button>
       <button class="header-button" @click="goTo('/login')">Логинизация</button>
     </div>
-    <div><button class="header-button" @click="() => {}">Выход</button></div>
+    <div>
+      <button class="header-button" @click="onExitAccount">Выход</button>
+    </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "HeaderComponent",
-  methods: {
-    goTo(route) {
-      this.$router.push(route);
-    },
-  },
-};
+<script setup lang="ts">
+import router from "@/router/router";
+
+function goTo(route: string) {
+  router.push(route);
+}
 </script>
 
 <style scoped lang="scss">
