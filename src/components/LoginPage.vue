@@ -23,6 +23,7 @@
 import { onBeforeUpdate, onMounted, onUpdated, ref } from "vue";
 import { useUserStore } from "@/store/store.ts";
 import { LoginUserType } from "@/api/typesApi";
+import router from "@/router/router";
 
 let email = ref("");
 let password = ref("");
@@ -38,16 +39,10 @@ async function submitForm() {
   password.value = "";
 }
 
-onMounted(() => {
-  console.log("я вмонтировался");
-});
-
 onBeforeUpdate(() => {
-  console.log("я перед обновлением");
-});
-
-onUpdated(() => {
-  console.log("я апгрейднулся");
+  if (store.isAuth) {
+    router.push("/main");
+  }
 });
 </script>
 
