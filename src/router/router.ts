@@ -25,6 +25,7 @@ router.beforeEach(async (to, from, next) => {
   if (!store.isAuth && to.path === "/main") {
     next({ path: "/login" });
   } else if (store.isAuth && to.path !== "/main") {
+    console.log("должно редиректить на main");
     next({ path: "/main" });
   } else {
     next();

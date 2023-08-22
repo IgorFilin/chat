@@ -14,15 +14,15 @@
         v-model="password"
       />
     </div>
+    <div>{{ store.isAuth }}</div>
     <button class="registration-button" @click="submitForm">Войти</button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onBeforeUpdate, onMounted, onUpdated, ref } from "vue";
 import { useUserStore } from "@/store/store.ts";
 import { LoginUserType } from "@/api/typesApi";
-import router from "@/router/router";
 
 let email = ref("");
 let password = ref("");
@@ -38,9 +38,17 @@ async function submitForm() {
   password.value = "";
 }
 
-// if (store.isAuth) {
-//   router.push("/main");
-// }
+onMounted(() => {
+  console.log("я вмонтировался");
+});
+
+onBeforeUpdate(() => {
+  console.log("я перед обновлением");
+});
+
+onUpdated(() => {
+  console.log("я апгрейднулся");
+});
 </script>
 
 <style scoped lang="scss">
