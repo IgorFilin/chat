@@ -6,8 +6,13 @@
       </button>
       <button class="header-button" @click="goTo('/login')">Логинизация</button>
     </div>
-    <div>
-      <button class="header-button" @click="onExitAccount">Выход</button>
+    <div class="header__nameLogoutContainer">
+      <div class="header__userName" v-if="store.name">
+        {{ store.name }}
+      </div>
+      <div>
+        <button class="header-button" @click="onExitAccount">Выход</button>
+      </div>
     </div>
   </div>
 </template>
@@ -15,6 +20,7 @@
 <script setup lang="ts">
 import router from "@/router/router";
 import { useUserStore } from "@/store/store";
+import { onUpdated } from "vue";
 
 const store = useUserStore();
 
@@ -28,6 +34,8 @@ async function onExitAccount() {
     router.push("/login");
   }
 }
+
+onUpdated(() => {});
 </script>
 
 <style scoped lang="scss">
@@ -45,5 +53,16 @@ async function onExitAccount() {
   color: white;
   border: none;
   cursor: pointer;
+}
+
+.header__nameLogoutContainer {
+  display: flex;
+  gap: 20px;
+}
+
+.header__userName {
+  color: white;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  text-decoration: underline;
 }
 </style>

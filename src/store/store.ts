@@ -54,6 +54,7 @@ export const useUserStore: any = defineStore("userData", {
       try {
         const result = await authApi.logout();
         this.isAuth = result.data.isAuth;
+        this.name = "";
         toast("Вы успешно вышли, возвращайтесь!");
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
