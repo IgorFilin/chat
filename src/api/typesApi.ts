@@ -13,3 +13,7 @@ export interface ResponseLoginType {
   message: string;
   name: string;
 }
+
+export interface ResponseLogoutType {
+  isAuth: boolean;
+}

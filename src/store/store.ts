@@ -4,6 +4,13 @@ import { LoginUserType } from "@/api/typesApi";
 import { useToast } from "vue-toastification";
 import axios, { AxiosError } from "axios";
 
+interface UserType {
+  name: string;
+  isAdmin: boolean | null;
+  isAuth: boolean;
+  messages: string;
+}
+
 const toast = useToast();
 
 export const useUserStore: any = defineStore("userData", {
@@ -43,12 +50,18 @@ export const useUserStore: any = defineStore("userData", {
         }
       }
     },
+    async logout() {
+      try {
+        const result = await authApi.logout();
+        this.isAuth = result.data.isAuth;
+        toast("Вы успешно вышли, возвращайтесь!");
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          const err = error as AxiosError<{ message: string }>;
+          this.messages = err.response ? err.response?.data.message : "Ошибка";
+          toast(this.messages);
+        }
+      }
+    },
   },
 });
-
-interface UserType {
-  name: string;
-  isAdmin: boolean | null;
-  isAuth: boolean;
-  messages: string;
-}

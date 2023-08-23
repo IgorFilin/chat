@@ -1,5 +1,10 @@
 import axios, { AxiosResponse } from "axios";
-import { LoginUserType, RegisterUserType, ResponseLoginType } from "./typesApi";
+import {
+  LoginUserType,
+  RegisterUserType,
+  ResponseLoginType,
+  ResponseLogoutType,
+} from "./typesApi";
 
 const instance = axios.create({
   baseURL: "http://localhost:3000/",
@@ -16,5 +21,8 @@ export const authApi = {
   },
   auth() {
     return instance.get("user/auth");
+  },
+  logout() {
+    return instance.get<ResponseLogoutType>("user/logout");
   },
 };

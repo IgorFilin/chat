@@ -14,12 +14,20 @@
 
 <script setup lang="ts">
 import router from "@/router/router";
+import { useUserStore } from "@/store/store";
+
+const store = useUserStore();
 
 function goTo(route: string) {
   router.push(route);
 }
 
-function onExitAccount() {}
+async function onExitAccount() {
+  if (store.isAuth) {
+    await store.logout();
+    router.push("/login");
+  }
+}
 </script>
 
 <style scoped lang="scss">
