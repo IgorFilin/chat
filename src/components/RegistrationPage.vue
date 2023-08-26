@@ -4,15 +4,19 @@
     <form class="registration-form">
       <div class="form-group">
         <label for="name">Имя:</label>
-        <input type="text" id="name" v-model="name" />
+        <input type="text" id="name" v-model="requestDataUser.name" />
       </div>
       <div class="form-group">
         <label for="email">Email:</label>
-        <input type="email" id="email" v-model="email" />
+        <input type="email" id="email" v-model="requestDataUser.email" />
       </div>
       <div class="form-group">
         <label for="password">Пароль:</label>
-        <input type="password" id="password" v-model="password" />
+        <input
+          type="password"
+          id="password"
+          v-model="requestDataUser.password"
+        />
       </div>
       <button class="registration-button" @click="submitForm">
         Зарегистрироваться
@@ -21,48 +25,25 @@
   </div>
 </template>
 
-<script setup>
-// import { mapState } from "vuex";
+<script setup lang="ts">
+import { useUserStore } from "@/store/store.ts";
+import { authApi } from "@/api/auth.ts";
+import { ref } from "vue";
+import { RegisterUserType } from "@/api/typesApi";
 
-// export default {
-//   name: "RegistrationComponent",
-//   data() {
-//     return {
-//       name: "",
-//       email: "",
-//       password: "",
-//     };
-//   },
-//   methods: {
-//     async submitForm(e) {
-//       // Обработка отправки формы
-//       e.preventDefault();
-//       const userData = {
-//         name: this.name,
-//         email: this.email,
-//         password: this.password,
-//       };
-//       this.$store.dispatch("registerUser", userData);
-//       this.name = "";
-//       this.email = "";
-//       this.password = "";
-//     },
-//   },
-//   computed: {
-//     ...mapState(["isAuth"]),
-//   },
-//   watch: {
-//     isAuth(value) {
-//       if (value) this.$store.dispatch("redirect", "/main");
-//     },
-//   },
-//   mounted() {
-//     if (this.$store.state.isAuth) {
-//       console.log(this.$store.state.isAuth);
-//       this.$store.dispatch("redirect", "/main");
-//     }
-//   },
-// };
+const requestDataUser = ref<RegisterUserType | {}>({
+  name: "",
+  email: "",
+  password: "",
+});
+
+const store = useUserStore();
+
+function submitForm(e: Event) {
+  e.preventDefault();
+  store.registration(requestDataUser.value);
+  requestDataUser.value = {};
+}
 </script>
 
 <style scoped lang="scss">

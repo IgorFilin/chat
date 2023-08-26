@@ -3,6 +3,7 @@ import { authApi } from "@/api/auth.ts";
 import { LoginUserType } from "@/api/typesApi";
 import { useToast } from "vue-toastification";
 import axios, { AxiosError } from "axios";
+import { dataRegisterUser } from "@/api/dataRegisterUser";
 
 interface UserType {
   name: string;
@@ -37,6 +38,23 @@ export const useUserStore: any = defineStore("userData", {
       } finally {
         toast(this.messages);
         this.auth();
+      }
+    },
+    async registration(dataUser: dataRegisterUser) {
+      try {
+        const result = await authApi.registerUser(dataUser);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          const err = error as AxiosError<{ message: string }>;
+          if (err.response) {
+            this.messages = Array.isArray(err.response?.data.message)
+              ? err.response?.data.message[0]
+              : "Ошибка";
+          }
+        }
+      } finally {
+        toast(this.messages);
+        this.messages = "";
       }
     },
     async auth() {

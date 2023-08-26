@@ -14,7 +14,7 @@ const instance = axios.create({
 
 export const authApi = {
   registerUser(userData: RegisterUserType) {
-    return instance.post<AxiosResponse>("/user/registration", userData);
+    return instance.post<RegisterUserType>("/user/registration", userData);
   },
   loginUser(userData: LoginUserType) {
     return instance.post<ResponseLoginType>("/user/login", userData);
