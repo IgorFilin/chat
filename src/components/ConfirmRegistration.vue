@@ -7,14 +7,23 @@
       <div class="v-confirmRef__inputCode">
         <input v-model="keyAccept" />
       </div>
+      <button @click="sendKey">Отправить</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from "@/store/store";
 import { ref } from "vue";
 
 const keyAccept = ref("");
+
+const store = useUserStore();
+
+function sendKey() {
+  store.confirmRegistration(keyAccept.value);
+  keyAccept.value = "";
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

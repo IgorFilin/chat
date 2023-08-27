@@ -15,7 +15,10 @@ const instance = axios.create({
 
 export const authApi = {
   registerUser(userData: RegisterUserType) {
-    return instance.post<RegisterUserType>("/user/registration", userData);
+    return instance.post<ResponseRegisterUserType>(
+      "/user/registration",
+      userData
+    );
   },
   loginUser(userData: LoginUserType) {
     return instance.post<ResponseLoginType>("/user/login", userData);
@@ -27,7 +30,7 @@ export const authApi = {
     return instance.get<ResponseLogoutType>("user/logout");
   },
   confirmReg(key: string) {
-    return instance.get<ResponseConfirmRegType>("user/confirmReg", {
+    return instance.get<ResponseConfirmRegType>("user/confirm", {
       params: { key },
     });
   },

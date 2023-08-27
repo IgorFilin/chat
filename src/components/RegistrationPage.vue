@@ -27,9 +27,9 @@
 
 <script setup lang="ts">
 import { useUserStore } from "@/store/store.ts";
-import { authApi } from "@/api/auth.ts";
-import { ref } from "vue";
+import { onUpdated, ref, watch } from "vue";
 import { RegisterUserType } from "@/api/typesApi";
+import router from "@/router/router";
 
 const requestDataUser = ref<RegisterUserType | {}>({
   name: "",
@@ -44,6 +44,16 @@ function submitForm(e: Event) {
   store.registration(requestDataUser.value);
   requestDataUser.value = {};
 }
+
+watch(
+  () => store.confirmReg,
+  () => {
+    if (store.confirmReg) {
+      router.push("/confirm");
+      store.confirmReg = false;
+    }
+  }
+);
 </script>
 
 <style scoped lang="scss">

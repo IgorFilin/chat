@@ -45,6 +45,7 @@ export const useUserStore: any = defineStore("userData", {
     async registration(dataUser: dataRegisterUser) {
       try {
         const result = await authApi.registerUser(dataUser);
+        this.confirmReg = result.data.isRegConfirm;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           const err = error as AxiosError<{ message: string }>;
