@@ -10,6 +10,7 @@ interface UserType {
   isAdmin: boolean | null;
   isAuth: boolean;
   messages: string;
+  confirmReg: boolean;
 }
 
 const toast = useToast();
@@ -20,6 +21,7 @@ export const useUserStore: any = defineStore("userData", {
       name: "",
       isAdmin: null,
       isAuth: false,
+      confirmReg: false,
       messages: "" as string | undefined,
     } as UserType;
   },
@@ -80,6 +82,23 @@ export const useUserStore: any = defineStore("userData", {
           this.messages = err.response ? err.response?.data.message : "Ошибка";
           toast(this.messages);
         }
+      }
+    },
+    async confirmRegistration(key: string) {
+      try {
+        await authApi.confirmReg(key);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          const err = error as AxiosError<{ message: string }>;
+          if (err.response) {
+            this.messages = Array.isArray(err.response?.data.message)
+              ? err.response?.data.message[0]
+              : "Ошибка";
+          }
+        }
+      } finally {
+        toast(this.messages);
+        this.messages = "";
       }
     },
   },

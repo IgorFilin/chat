@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import {
   LoginUserType,
   RegisterUserType,
+  ResponseConfirmRegType,
   ResponseLoginType,
   ResponseLogoutType,
 } from "./typesApi";
@@ -24,5 +25,10 @@ export const authApi = {
   },
   logout() {
     return instance.get<ResponseLogoutType>("user/logout");
+  },
+  confirmReg(key: string) {
+    return instance.get<ResponseConfirmRegType>("user/confirmReg", {
+      params: { key },
+    });
   },
 };

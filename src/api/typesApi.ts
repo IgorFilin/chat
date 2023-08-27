@@ -17,3 +17,7 @@ export interface ResponseLoginType {
 export interface ResponseLogoutType {
   isAuth: boolean;
 }
+
+export interface ResponseConfirmRegType {
+  key: string;
+}
