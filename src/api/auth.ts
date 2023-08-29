@@ -5,6 +5,7 @@ import {
   ResponseConfirmRegType,
   ResponseLoginType,
   ResponseLogoutType,
+  ResponseRegisterUserType,
 } from "./typesApi";
 
 const instance = axios.create({

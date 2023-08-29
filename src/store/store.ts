@@ -46,6 +46,7 @@ export const useUserStore: any = defineStore("userData", {
       try {
         const result = await authApi.registerUser(dataUser);
         this.confirmReg = result.data.isRegConfirm;
+        this.messages = result.data.message;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           const err = error as AxiosError<{ message: string }>;
@@ -87,7 +88,10 @@ export const useUserStore: any = defineStore("userData", {
     },
     async confirmRegistration(key: string) {
       try {
-        await authApi.confirmReg(key);
+        const result = await authApi.confirmReg(key);
+        this.name = result.data.name;
+        this.messages = result.data.message;
+        await this.auth();
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           const err = error as AxiosError<{ message: string }>;

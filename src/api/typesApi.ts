@@ -19,9 +19,11 @@ export interface ResponseLogoutType {
 }
 
 export interface ResponseConfirmRegType {
-  key: string;
+  name: string;
+  message: string;
 }
 
 export interface ResponseRegisterUserType {
   isRegConfirm: boolean;
+  message: string;
 }

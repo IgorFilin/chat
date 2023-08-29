@@ -13,8 +13,9 @@
 </template>
 
 <script setup lang="ts">
+import router from "@/router/router";
 import { useUserStore } from "@/store/store";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 const keyAccept = ref("");
 
@@ -24,6 +25,15 @@ function sendKey() {
   store.confirmRegistration(keyAccept.value);
   keyAccept.value = "";
 }
+
+watch(
+  () => store.isAuth,
+  () => {
+    if (store.isAuth) {
+      router.push("/main");
+    }
+  }
+);
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
