@@ -14,7 +14,6 @@
         v-model="password"
       />
     </div>
-    <div>{{ store.isAuth }}</div>
     <button class="registration-button" @click="submitForm">Войти</button>
   </div>
 </template>
