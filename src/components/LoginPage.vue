@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUpdate, onMounted, onUpdated, ref } from "vue";
+import { onBeforeUpdate, onMounted, onUpdated, ref, watch } from "vue";
 import { useUserStore } from "@/store/store.ts";
 import { LoginUserType } from "@/api/typesApi";
 import router from "@/router/router";
@@ -38,11 +38,12 @@ async function submitForm() {
   password.value = "";
 }
 
-onBeforeUpdate(() => {
-  if (store.isAuth) {
+watch(
+  () => store.isAuth,
+  () => {
     router.push("/main");
   }
-});
+);
 </script>
 
 <style scoped lang="scss">
