@@ -15,7 +15,7 @@
 <script setup>
 import { useUserStore } from "@/store/store.ts";
 import router from "@/router/router";
-import { ref } from "vue";
+import { onMounted, onUpdated, ref } from "vue";
 
 const message = ref("");
 
@@ -25,10 +25,10 @@ if (!store.isAuth) {
   router.push("/login");
 }
 
-const connection = new WebSocket("wss://localhost:3000");
+const connection = new WebSocket("ws://localhost:3000", ["msgToServer"]);
 
 connection.onopen = function (event) {
-  console.log("Successfully connected to the echo websocket server...");
+  console.log("Соединение открыто");
 };
 
 connection.onmessage = function (event) {
@@ -36,15 +36,28 @@ connection.onmessage = function (event) {
 };
 
 function sendMessage() {
-  const eventData = {
-    event: "msgToServer", // Имя события
-    payload: message.value, // Данные, которые вы хотите отправить
-  };
+  if (connection.readyState === 1) {
+    const eventData = {
+      event: "msgToServer", // Имя события
+      payload: message.value, // Данные, которые вы хотите отправить
+    };
 
-  // Преобразование объекта в строку JSON и отправка через WebSocket
-  connection.send(JSON.stringify(eventData));
+    // Преобразование объекта в строку JSON и отправка через WebSocket
+    connection.send(JSON.stringify(eventData));
+  }
 }
-connection.onopen();
+
+connection.onclose = function (eventclose) {
+  console.log(eventclose);
+  console.log("соеденение закрыто причина: " + eventclose);
+};
+
+onMounted(() => {
+  connection.onopen();
+});
+onUpdated(() => {
+  console.log(connection.readyState);
+});
 </script>
 
 <style scoped lang="scss">
