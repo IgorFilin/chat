@@ -3,8 +3,7 @@
     <h1 class="v-mainPage__title">Добро пожаловать</h1>
     <div class="v-mainPage__chatContainer">
       <div class="v-mainPage__chat">
-        <div>Igor</div>
-        <div>Hello</div>
+        <div v-for="mes in messages">{{ mes }}</div>
       </div>
       <input v-model="message" class="v-mainPage__chatInput" type="text" />
     </div>
@@ -18,6 +17,8 @@ import router from "@/router/router";
 import { onMounted, onUpdated, ref } from "vue";
 
 const message = ref("");
+const chat = ref("");
+const messages = ref([]);
 
 const store = useUserStore();
 
@@ -25,38 +26,36 @@ if (!store.isAuth) {
   router.push("/login");
 }
 
-const connection = new WebSocket("ws://localhost:3000", ["msgToServer"]);
+const connection = new WebSocket("ws://localhost:3000");
 
 connection.onopen = function (event) {
   console.log("Соединение открыто");
 };
 
-connection.onmessage = function (event) {
-  console.log(event);
-};
-
 function sendMessage() {
   if (connection.readyState === 1) {
-    const eventData = {
-      event: "msgToServer", // Имя события
-      payload: message.value, // Данные, которые вы хотите отправить
-    };
-
-    // Преобразование объекта в строку JSON и отправка через WebSocket
-    connection.send(JSON.stringify(eventData));
+    connection.send(JSON.stringify({ event: "message", data: message.value }));
+    messages.value.push(message.value);
+    message.value = "";
   }
 }
 
 connection.onclose = function (eventclose) {
   console.log(eventclose);
-  console.log("соеденение закрыто причина: " + eventclose);
+  console.log("Соединение закрыто причина: " + eventclose);
+};
+
+connection.onerror = function (error) {
+  console.error("WebSocket Error:", error);
 };
 
 onMounted(() => {
   connection.onopen();
-});
-onUpdated(() => {
-  console.log(connection.readyState);
+  connection.onmessage = function (event) {
+    console.log("EVENTTEST", event);
+    const m = JSON.parse(event.data);
+    messages.value.push(m);
+  };
 });
 </script>
 
