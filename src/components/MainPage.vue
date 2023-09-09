@@ -35,8 +35,6 @@ connection.onopen = function (event) {
 function sendMessage() {
   if (connection.readyState === 1) {
     connection.send(JSON.stringify({ event: "message", data: message.value }));
-    messages.value.push(message.value);
-    message.value = "";
   }
 }
 
@@ -49,13 +47,14 @@ connection.onerror = function (error) {
   console.error("WebSocket Error:", error);
 };
 
+connection.onmessage = function (event) {
+  console.log("EVENTTEST", event);
+  const m = JSON.parse(event.data);
+  messages.value.push(m);
+};
+
 onMounted(() => {
   connection.onopen();
-  connection.onmessage = function (event) {
-    console.log("EVENTTEST", event);
-    const m = JSON.parse(event.data);
-    messages.value.push(m);
-  };
 });
 </script>
 
