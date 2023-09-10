@@ -27,7 +27,7 @@ const store = useUserStore();
 function goTo(route: string) {
   router.push(route);
 }
-
+console.log("NAME", store.name);
 async function onExitAccount() {
   if (store.isAuth) {
     await store.logout();

@@ -65,6 +65,7 @@ export const useUserStore: any = defineStore("userData", {
       try {
         const result = await authApi.auth();
         this.isAuth = result.data.isAuth;
+        this.name = result.data.name;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           const err = error as AxiosError<{ message: string }>;
