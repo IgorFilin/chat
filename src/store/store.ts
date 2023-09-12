@@ -4,6 +4,7 @@ import { LoginUserType } from "@/api/typesApi";
 import { useToast } from "vue-toastification";
 import axios, { AxiosError } from "axios";
 import { dataRegisterUser } from "@/api/dataRegisterUser";
+import uuid from "uuid-random";
 
 interface UserType {
   name: string;
@@ -11,6 +12,7 @@ interface UserType {
   isAuth: boolean;
   messages: string;
   confirmReg: boolean;
+  id: string;
 }
 
 const toast = useToast();
@@ -23,6 +25,7 @@ export const useUserStore: any = defineStore("userData", {
       isAuth: false,
       confirmReg: false,
       messages: "" as string | undefined,
+      id: "",
     } as UserType;
   },
   getters: {},
@@ -66,6 +69,9 @@ export const useUserStore: any = defineStore("userData", {
         const result = await authApi.auth();
         this.isAuth = result.data.isAuth;
         this.name = result.data.name;
+        if (!this.id) {
+          this.id = uuid();
+        }
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           const err = error as AxiosError<{ message: string }>;

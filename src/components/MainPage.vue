@@ -30,10 +30,11 @@ if (!store.isAuth) {
   router.push("/login");
 }
 
-const connection = new WebSocket("ws://localhost:3000");
+const connection = new WebSocket(`ws://localhost:3000?userID=${1}`);
 
 connection.onopen = function (event) {
   console.log("Соединение открыто");
+  console.log(store.id);
 };
 
 function sendMessage() {
