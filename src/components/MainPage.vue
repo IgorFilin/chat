@@ -1,7 +1,13 @@
 <template>
   <div class="v-mainPage">
     <div class="v-mainPage__chatContainer">
-      <div class="v-mainPage_message" v-for="mes in messages">{{ mes }}</div>
+      <div
+        class="v-mainPage_message"
+        v-for="item in messages"
+        :class="{ me: isMeActiveClass(item) }"
+      >
+        {{ item.message }}
+      </div>
     </div>
     <div class="v-mainPage__chatInputButtonContainer">
       <input v-model="message" class="v-mainPage__chatInput" type="text" />
@@ -30,7 +36,7 @@ if (!store.isAuth) {
   router.push("/login");
 }
 
-const connection = new WebSocket(`ws://localhost:3000?userID=${1}`);
+const connection = new WebSocket(`ws://localhost:3000?userID=${store.id}`);
 
 connection.onopen = function (event) {
   console.log("Соединение открыто");
@@ -39,7 +45,12 @@ connection.onopen = function (event) {
 
 function sendMessage() {
   if (connection.readyState === 1) {
-    connection.send(JSON.stringify({ event: "message", data: message.value }));
+    connection.send(
+      JSON.stringify({
+        event: "message",
+        data: { message: message.value, id: store.id },
+      })
+    );
     message.value = "";
   }
 }
@@ -54,10 +65,15 @@ connection.onerror = function (error) {
 };
 
 connection.onmessage = function (event) {
-  console.log("EVENTTEST", event);
-  const m = JSON.parse(event.data);
-  messages.value.push(m);
+  const data = JSON.parse(event.data);
+  messages.value.push({ id: data.userId, message: data.message });
 };
+
+function isMeActiveClass(item) {
+  if (item.id) {
+    return item.id === store.id;
+  }
+}
 
 onMounted(() => {
   connection.onopen();
@@ -78,19 +94,22 @@ onMounted(() => {
 
 .v-mainPage__chatContainer {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  width: 100%;
+  width: 75%;
   height: 100%;
-  border-radius: 20px;
   background: #ffffff;
+  -webkit-box-shadow: 0px 0px 80px -28px rgba(0, 0, 0, 0.16);
+  -moz-box-shadow: 0px 0px 80px -28px rgba(2, 2, 2, 0.16);
+  box-shadow: 0px 0px 80px -28px rgba(0, 0, 0, 0.16);
+  gap: 10px;
 }
 
 .v-mainPage__chatInputButtonContainer {
   display: flex;
-  width: 100%;
+  width: 75%;
 }
 
 .v-mainPage_chatButton {
@@ -111,12 +130,14 @@ onMounted(() => {
 }
 
 .v-mainPage_message {
+  display: flex;
   padding: 14px 16px;
   word-wrap: break-word;
   background: #f0f0f0;
   font-size: 14px;
   line-height: 20px;
   justify-content: flex-end;
+  align-self: flex-end;
   color: #333;
   border-radius: 0 8px 8px 8px;
   overflow: visible;
@@ -126,11 +147,8 @@ onMounted(() => {
   scroll-margin-bottom: 21px;
 
   &.me {
-    align-items: flex-start;
-  }
-
-  &.all {
-    align-items: flex-end;
+    align-self: flex-start;
+    background: #62bdd1;
   }
 }
 
