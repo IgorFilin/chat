@@ -7,6 +7,7 @@
 
 <script lang="ts" setup>
 import Header from "@/components/Header.vue";
+import Loader from "@/components/Loader.vue";
 import { onMounted, onUpdated } from "vue";
 import { useUserStore } from "./store/store";
 

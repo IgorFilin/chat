@@ -1,10 +1,20 @@
 <template>
   <div class="header">
     <div>
-      <button class="header-button" @click="goTo('/registration')">
+      <button
+        v-if="!store.isAuth"
+        class="header-button"
+        @click="goTo('/registration')"
+      >
         Регистрация
       </button>
-      <button class="header-button" @click="goTo('/login')">Логинизация</button>
+      <button
+        v-if="!store.isAuth"
+        class="header-button"
+        @click="goTo('/login')"
+      >
+        Логинизация
+      </button>
     </div>
     <div class="header__nameLogoutContainer">
       <div class="header__userName" v-if="store.name">

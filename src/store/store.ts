@@ -13,6 +13,7 @@ interface UserType {
   messages: string;
   confirmReg: boolean;
   id: string;
+  isLoading: boolean;
 }
 
 const toast = useToast();
@@ -25,6 +26,7 @@ export const useUserStore: any = defineStore("userData", {
       isAuth: false,
       confirmReg: false,
       messages: "" as string | undefined,
+      isLoading: false,
       id: "",
     } as UserType;
   },
@@ -66,6 +68,7 @@ export const useUserStore: any = defineStore("userData", {
     },
     async auth() {
       try {
+        this.isLoading = true;
         const result = await authApi.auth();
         this.isAuth = result.data.isAuth;
         this.name = result.data.name;
@@ -77,6 +80,8 @@ export const useUserStore: any = defineStore("userData", {
           const err = error as AxiosError<{ message: string }>;
           this.messages = err.response ? err.response?.data.message : "Ошибка";
         }
+      } finally {
+        this.isLoading = false;
       }
     },
     async logout() {
