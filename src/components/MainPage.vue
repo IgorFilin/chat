@@ -10,12 +10,13 @@
       </div>
     </div>
     <div class="v-mainPage__chatInputButtonContainer">
-      <input v-model="message" class="v-mainPage__chatInput" type="text" />
-      <button
-        class="v-mainPage_chatButton"
-        @click="sendMessage"
-        @keypress.enter="sendMessage"
-      >
+      <textarea
+        @keyup.enter="sendMessage"
+        v-model="message"
+        class="v-mainPage__chatInput"
+        type="text"
+      />
+      <button class="v-mainPage_chatButton" @click="sendMessage">
         Отправить сообщение
       </button>
     </div>
@@ -25,7 +26,7 @@
 <script setup>
 import { useUserStore } from "@/store/store.ts";
 import router from "@/router/router";
-import { onMounted, onUpdated, ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const message = ref("");
 const messages = ref([]);
@@ -56,7 +57,6 @@ function sendMessage() {
 }
 
 connection.onclose = function (eventclose) {
-  console.log(eventclose);
   console.log("Соединение закрыто причина: " + eventclose);
 };
 
@@ -118,7 +118,6 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   color: #fff;
-  border: 2px solid #fff;
   background-color: #141416;
   transition: 0.5s;
 
@@ -130,6 +129,7 @@ onMounted(() => {
 }
 
 .v-mainPage_message {
+  word-break: break-all;
   display: flex;
   padding: 14px 16px;
   word-wrap: break-word;
@@ -139,7 +139,7 @@ onMounted(() => {
   justify-content: flex-end;
   align-self: flex-end;
   color: #333;
-  border-radius: 0 8px 8px 8px;
+  border-radius: 8px 0 8px 8px;
   overflow: visible;
   white-space: pre-wrap;
   transition: 0.3s;
@@ -148,16 +148,20 @@ onMounted(() => {
 
   &.me {
     align-self: flex-start;
-    background: #62bdd1;
+    background: #a3b8bc;
+    border-radius: 0 8px 8px 8px;
   }
 }
 
 .v-mainPage__chatInput {
   width: 100%;
   background-color: #ededed;
-  border: unset;
   padding-left: 10px;
   border: 1px solid #141416;
+  display: inline-block;
+  vertical-align: middle;
+  resize: none;
+  padding: 10px;
 
   &:focus-visible {
     outline: none;
