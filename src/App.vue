@@ -10,8 +10,15 @@
 import Header from "@/components/Header.vue";
 import Loader from "@/components/Loader.vue";
 import { useUserStore } from "./store/store";
+import { onMounted } from "vue";
 
 const store = useUserStore();
+
+onMounted(() => {
+  if (!store.isAuth) {
+    store.auth();
+  }
+});
 </script>
 <style lang="scss">
 body {
