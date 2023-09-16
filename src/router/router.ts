@@ -20,9 +20,9 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const store = useUserStore();
 
-  // if (!store.isAuth) {
-  //   await store.auth();
-  // }
+  if (!store.isAuth) {
+    store.auth();
+  }
 
   if (!store.isAuth && to.path === "/main") {
     next({ path: "/login" });
