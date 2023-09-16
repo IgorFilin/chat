@@ -38,6 +38,7 @@ export const useUserStore: any = defineStore("userData", {
         const result = await authApi.loginUser(data);
         this.messages = result.data.message;
         this.name = result.data.name;
+        this.isAuth = result.data.isAuth;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           const err = error as AxiosError<{ message: string }>;
@@ -46,7 +47,6 @@ export const useUserStore: any = defineStore("userData", {
       } finally {
         this.isLoading = false;
         toast(this.messages);
-        this.auth();
       }
     },
     async registration(dataUser: dataRegisterUser) {
@@ -83,7 +83,7 @@ export const useUserStore: any = defineStore("userData", {
           const err = error as AxiosError<{ message: string }>;
           this.messages = err.response ? err.response?.data.message : "Ошибка";
         }
-      } 
+      }
     },
     async logout() {
       try {

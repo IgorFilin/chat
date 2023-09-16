@@ -30,6 +30,8 @@ router.beforeEach(async (to, from, next) => {
     next({ path: "/main" });
   } else if (store.isAuth && to.path !== "/main") {
     next({ path: "/main" });
+  } else if (store.isAuth && to.path == "/login") {
+    next({ path: "/main" });
   } else {
     next();
   }

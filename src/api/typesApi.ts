@@ -12,6 +12,7 @@ export interface RegisterUserType {
 export interface ResponseLoginType {
   message: string;
   name: string;
+  isAuth: true;
 }
 
 export interface ResponseLogoutType {

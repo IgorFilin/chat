@@ -21,7 +21,13 @@
         {{ store.name }}
       </div>
       <div>
-        <button class="header-button" @click="onExitAccount">Выход</button>
+        <button
+          v-if="store.isAuth"
+          class="header-button"
+          @click="onExitAccount"
+        >
+          Выход
+        </button>
       </div>
     </div>
   </div>
@@ -56,6 +62,8 @@ onUpdated(() => {});
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
+  position: relative;
+  z-index: 999;
 }
 
 .header-button {
