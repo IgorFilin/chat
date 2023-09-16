@@ -12,6 +12,9 @@
   justify-content: center;
   align-items: center;
   z-index: 99;
+  position: absolute;
+  top: 0;
+  background-color: white;
 }
 .loader {
   width: 48px;

@@ -34,6 +34,7 @@ export const useUserStore: any = defineStore("userData", {
   actions: {
     async loginAction(data: LoginUserType) {
       try {
+        this.isLoading = true;
         const result = await authApi.loginUser(data);
         this.messages = result.data.message;
         this.name = result.data.name;
@@ -43,12 +44,14 @@ export const useUserStore: any = defineStore("userData", {
           this.messages = err.response ? err.response?.data.message : "Ошибка";
         }
       } finally {
+        this.isLoading = false;
         toast(this.messages);
         this.auth();
       }
     },
     async registration(dataUser: dataRegisterUser) {
       try {
+        this.isLoading = true;
         const result = await authApi.registerUser(dataUser);
         this.confirmReg = result.data.isRegConfirm;
         this.messages = result.data.message;
@@ -62,13 +65,13 @@ export const useUserStore: any = defineStore("userData", {
           }
         }
       } finally {
+        this.isLoading = false;
         toast(this.messages);
         this.messages = "";
       }
     },
     async auth() {
       try {
-        this.isLoading = true;
         const result = await authApi.auth();
         this.isAuth = result.data.isAuth;
         this.name = result.data.name;
@@ -80,12 +83,11 @@ export const useUserStore: any = defineStore("userData", {
           const err = error as AxiosError<{ message: string }>;
           this.messages = err.response ? err.response?.data.message : "Ошибка";
         }
-      } finally {
-        this.isLoading = false;
-      }
+      } 
     },
     async logout() {
       try {
+        this.isLoading = true;
         const result = await authApi.logout();
         this.isAuth = result.data.isAuth;
         this.name = "";
@@ -96,10 +98,13 @@ export const useUserStore: any = defineStore("userData", {
           this.messages = err.response ? err.response?.data.message : "Ошибка";
           toast(this.messages);
         }
+      } finally {
+        this.isLoading = false;
       }
     },
     async confirmRegistration(key: string) {
       try {
+        this.isLoading = true;
         const result = await authApi.confirmReg(key);
         this.name = result.data.name;
         this.messages = result.data.message;
@@ -114,6 +119,7 @@ export const useUserStore: any = defineStore("userData", {
           }
         }
       } finally {
+        this.isLoading = false;
         toast(this.messages);
         this.messages = "";
       }
