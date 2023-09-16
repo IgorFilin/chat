@@ -62,8 +62,6 @@ onUpdated(() => {});
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  position: relative;
-  z-index: 999;
 }
 
 .header-button {
