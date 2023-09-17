@@ -2,13 +2,17 @@
   <div class="v-mainPage">
     <div class="v-mainPage__chatContainer">
       <div
-        class="v-mainPage_message"
-        v-for="{ date, photo, message, id } in messages"
+        class="v-mainPage_messageContainer"
         :class="{ me: isMeActiveClass(id) }"
+        v-for="{ date, photo, message, name, id } in messages"
       >
-        <div>{{ date }}</div>
-        <div>{{ photo }}</div>
-        <div>{{ message }}</div>
+        <div class="v-mainPage_messagePhoto">{{ photo }}</div>
+        <div class="v-mainPage_messageContentContainer">
+          <div class="v-mainPage_message">
+            <div>{{ message }}</div>
+          </div>
+          <div>{{ date }}</div>
+        </div>
       </div>
     </div>
     <div class="v-mainPage__chatInputButtonContainer">
@@ -68,7 +72,11 @@ connection.onerror = function (error) {
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
-  messages.value.push({ id: data.userId, message: data.message });
+  messages.value.push({
+    id: data.userId,
+    message: data.message,
+    name: data.name,
+  });
 };
 
 function isMeActiveClass(id) {
@@ -94,6 +102,39 @@ onMounted(() => {
   margin: auto;
 }
 
+.v-mainPage_messagePhoto {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: brown;
+}
+
+.v-mainPage_messageContainer {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  align-self: flex-end;
+
+  &.me {
+    align-self: flex-start;
+
+    .v-mainPage_message {
+      align-self: flex-start;
+      background: #a3b8bc;
+      border-radius: 0 8px 8px 8px;
+      position: relative;
+
+      // &:after {
+      //   content: "";
+      //   position: absolute;
+      //   left: 0px;
+      //   top: 15px;
+      //   border: 7px solid transparent;
+      //   border-right: 7px solid green;
+      // }
+    }
+  }
+}
 .v-mainPage__chatContainer {
   display: flex;
   justify-content: flex-end;
@@ -114,6 +155,12 @@ onMounted(() => {
   width: 75%;
 }
 
+.v-mainPage_messageContentContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+}
 .v-mainPage_chatButton {
   display: flex;
   padding: 5px 10px;
@@ -147,12 +194,6 @@ onMounted(() => {
   transition: 0.3s;
   scroll-margin-top: 16px;
   scroll-margin-bottom: 21px;
-
-  &.me {
-    align-self: flex-start;
-    background: #a3b8bc;
-    border-radius: 0 8px 8px 8px;
-  }
 }
 
 .v-mainPage__chatInput {
