@@ -35,4 +35,7 @@ export const authApi = {
       params: { key },
     });
   },
+  getPhoto() {
+    return instance.get("user/avatar", { responseType: "blob" });
+  },
 };

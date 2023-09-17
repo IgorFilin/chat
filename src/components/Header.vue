@@ -1,34 +1,35 @@
 <template>
-  <div class="header">
+  <div class="v-header__container">
     <div>
       <button
         v-if="!store.isAuth"
-        class="header-button"
+        class="v-header_navigateButton"
         @click="goTo('/registration')"
       >
         Регистрация
       </button>
       <button
         v-if="!store.isAuth"
-        class="header-button"
+        class="v-header__navigateButton"
         @click="goTo('/login')"
       >
         Логинизация
       </button>
     </div>
-    <div class="header__nameLogoutContainer">
-      <div class="header__userName" v-if="store.name">
+    <div class="v-header__nameLogoutContainer">
+      <div>
+        <img class="v-header__photoUser" :src="store.userPhoto" alt="Аватар" />
+      </div>
+      <div class="v-header__userName" v-if="store.name">
         {{ store.name }}
       </div>
-      <div>
-        <button
-          v-if="store.isAuth"
-          class="header-button"
-          @click="onExitAccount"
-        >
-          Выход
-        </button>
-      </div>
+      <button
+        v-if="store.isAuth"
+        class="v-header__navigateButton"
+        @click="onExitAccount"
+      >
+        Выход
+      </button>
     </div>
   </div>
 </template>
@@ -43,7 +44,7 @@ const store = useUserStore();
 function goTo(route: string) {
   router.push(route);
 }
-console.log("NAME", store.name);
+
 async function onExitAccount() {
   if (store.isAuth) {
     await store.logout();
@@ -55,7 +56,7 @@ onUpdated(() => {});
 </script>
 
 <style scoped lang="scss">
-.header {
+.v-header__container {
   background-color: #202020;
   height: 40px;
   display: flex;
@@ -64,21 +65,28 @@ onUpdated(() => {});
   padding: 0 20px;
 }
 
-.header-button {
+.v-header__navigateButton {
   background-color: #202020;
   color: white;
   border: none;
   cursor: pointer;
+  align-self: center;
 }
 
-.header__nameLogoutContainer {
+.v-header__nameLogoutContainer {
   display: flex;
   gap: 20px;
+  align-self: center;
 }
 
-.header__userName {
+.v-header__photoUser {
+  width: 40px;
+  height: 40px;
+}
+.v-header__userName {
   color: white;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   text-decoration: underline;
+  align-self: center;
 }
 </style>

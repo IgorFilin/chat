@@ -14,6 +14,7 @@ interface UserType {
   confirmReg: boolean;
   id: string;
   isLoading: boolean;
+  userPhoto: any;
 }
 
 const toast = useToast();
@@ -28,6 +29,7 @@ export const useUserStore: any = defineStore("userData", {
       messages: "" as string | undefined,
       isLoading: false,
       id: "",
+      userPhoto: "",
     } as UserType;
   },
   getters: {},
@@ -78,6 +80,10 @@ export const useUserStore: any = defineStore("userData", {
         this.isAuth = result.data.isAuth;
         this.name = result.data.name;
         this.id = result.data.id;
+        const resultImage = await authApi.getPhoto();
+        const blob = new Blob([resultImage.data], { type: "image/webp" });
+        const imageSrc = URL.createObjectURL(blob);
+        this.userPhoto = imageSrc;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           const err = error as AxiosError<{ message: string }>;
