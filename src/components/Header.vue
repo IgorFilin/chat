@@ -3,7 +3,7 @@
     <div>
       <button
         v-if="!store.isAuth"
-        class="v-header_navigateButton"
+        class="v-header__navigateButton"
         @click="goTo('/registration')"
       >
         Регистрация
@@ -17,7 +17,7 @@
       </button>
     </div>
     <div class="v-header__nameLogoutContainer">
-      <div>
+      <div v-if="store.isAuth">
         <img class="v-header__photoUser" :src="store.userPhoto" alt="Аватар" />
       </div>
       <div class="v-header__userName" v-if="store.name">

@@ -80,6 +80,7 @@ export const useUserStore: any = defineStore("userData", {
         this.isAuth = result.data.isAuth;
         this.name = result.data.name;
         this.id = result.data.id;
+
         const resultImage = await authApi.getPhoto();
         const blob = new Blob([resultImage.data], { type: "image/webp" });
         const imageSrc = URL.createObjectURL(blob);
