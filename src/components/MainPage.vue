@@ -3,10 +3,12 @@
     <div class="v-mainPage__chatContainer">
       <div
         class="v-mainPage_message"
-        v-for="item in messages"
-        :class="{ me: isMeActiveClass(item) }"
+        v-for="{ date, photo, message, id } in messages"
+        :class="{ me: isMeActiveClass(id) }"
       >
-        {{ item.message }}
+        <div>{{ date }}</div>
+        <div>{{ photo }}</div>
+        <div>{{ message }}</div>
       </div>
     </div>
     <div class="v-mainPage__chatInputButtonContainer">
@@ -69,9 +71,9 @@ connection.onmessage = function (event) {
   messages.value.push({ id: data.userId, message: data.message });
 };
 
-function isMeActiveClass(item) {
-  if (item.id) {
-    return item.id === store.id;
+function isMeActiveClass(id) {
+  if (id) {
+    return id === store.id;
   }
 }
 

@@ -13,6 +13,7 @@ export interface ResponseLoginType {
   message: string;
   name: string;
   isAuth: true;
+  id: string;
 }
 
 export interface ResponseLogoutType {
@@ -22,6 +23,7 @@ export interface ResponseLogoutType {
 export interface ResponseConfirmRegType {
   name: string;
   message: string;
+  id: string;
 }
 
 export interface ResponseRegisterUserType {

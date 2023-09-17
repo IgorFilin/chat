@@ -39,6 +39,7 @@ export const useUserStore: any = defineStore("userData", {
         this.messages = result.data.message;
         this.name = result.data.name;
         this.isAuth = result.data.isAuth;
+        this.id = result.data.id;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           const err = error as AxiosError<{ message: string }>;
@@ -76,9 +77,7 @@ export const useUserStore: any = defineStore("userData", {
         const result = await authApi.auth();
         this.isAuth = result.data.isAuth;
         this.name = result.data.name;
-        if (!this.id) {
-          this.id = uuid();
-        }
+        this.id = result.data.id;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           const err = error as AxiosError<{ message: string }>;

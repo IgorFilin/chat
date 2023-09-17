@@ -11,6 +11,7 @@
         autocomplete="on"
         type="password"
         id="password"
+        @keypress.enter="submitForm"
         v-model="password"
       />
     </div>
