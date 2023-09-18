@@ -4,9 +4,9 @@
       <div
         class="v-mainPage_messageContainer"
         :class="{ me: isMeActiveClass(id) }"
-        v-for="{ date, photo, message, name, id } in messages"
+        v-for="{ date, userPhoto, message, name, id } in messages"
       >
-        <div class="v-mainPage_messagePhoto">{{ photo }}</div>
+        <img :src="userPhoto" class="v-mainPage_messagePhoto" />
         <div class="v-mainPage_messageContentContainer">
           <div class="v-mainPage_message">
             <div>{{ message }}</div>
@@ -72,10 +72,14 @@ connection.onerror = function (error) {
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
+  const blob = new Blob([data.userPhoto.data], { type: "image/webp" });
+  const imageSrc = URL.createObjectURL(blob);
+
   messages.value.push({
     id: data.userId,
     message: data.message,
     name: data.name,
+    userPhoto: imageSrc,
   });
 };
 
