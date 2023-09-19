@@ -72,9 +72,10 @@ connection.onerror = function (error) {
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
-  const blob = new Blob([data.userPhoto.data], { type: "image/webp" });
+  const base64Image = data.userPhoto;
+  const binaryData = Uint8Array.from(atob(base64Image), (c) => c.charCodeAt(0));
+  const blob = new Blob([binaryData]);
   const imageSrc = URL.createObjectURL(blob);
-
   messages.value.push({
     id: data.userId,
     message: data.message,
