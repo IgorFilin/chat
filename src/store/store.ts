@@ -133,5 +133,31 @@ export const useUserStore: any = defineStore("userData", {
         this.messages = "";
       }
     },
+    async sendAvatarUser(file: any) {
+      try {
+        if (
+          !file ||
+          (!file.type.includes("image/webp") &&
+            !file.type.includes("image/png"))
+        ) {
+          return new Error();
+        }
+
+        const formDataFile = new FormData(file);
+        const result = await authApi.setPhoto(formDataFile);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          const err = error as AxiosError<{ message: string }>;
+          if (err.response) {
+            this.messages = Array.isArray(err.response?.data.message)
+              ? err.response?.data.message[0]
+              : "Ошибка";
+          }
+        }
+      } finally {
+        toast(this.messages);
+        this.messages = "";
+      }
+    },
   },
 });

@@ -17,9 +17,16 @@
       </button>
     </div>
     <div class="v-header__nameLogoutContainer">
-      <div v-if="store.isAuth">
-        <img class="v-header__photoUser" :src="store.userPhoto" alt="Аватар" />
-      </div>
+      <label for="download">
+        <div v-if="store.isAuth">
+          <img
+            class="v-header__photoUser"
+            :src="store.userPhoto"
+            alt="Аватар"
+          />
+          <input id="download" @change="downloadPhoto" hidden type="file" />
+        </div>
+      </label>
       <div class="v-header__userName" v-if="store.name">
         {{ store.name }}
       </div>
@@ -37,7 +44,6 @@
 <script setup lang="ts">
 import router from "@/router/router";
 import { useUserStore } from "@/store/store";
-import { onUpdated } from "vue";
 
 const store = useUserStore();
 
@@ -52,7 +58,9 @@ async function onExitAccount() {
   }
 }
 
-onUpdated(() => {});
+function downloadPhoto(event: any) {
+  const file = event.target.files[0];
+}
 </script>
 
 <style scoped lang="scss">
@@ -82,6 +90,13 @@ onUpdated(() => {});
 .v-header__photoUser {
   width: 40px;
   height: 40px;
+  transition: 0.5s;
+
+  &:hover {
+    transition: 0.5s;
+    cursor: pointer;
+    opacity: 0.8;
+  }
 }
 .v-header__userName {
   color: white;
