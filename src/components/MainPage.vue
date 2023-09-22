@@ -9,6 +9,7 @@
         <img :src="userPhoto" class="v-mainPage_messagePhoto" />
         <div class="v-mainPage_messageContentContainer">
           <div class="v-mainPage_message">
+            <div class="v-mainPage_messageName">{{ name }}</div>
             <div>{{ message }}</div>
           </div>
           <div>{{ date }}</div>
@@ -124,6 +125,8 @@ onMounted(() => {
     align-self: flex-start;
 
     .v-mainPage_message {
+      display: flex;
+      flex-direction: column;
       align-self: flex-start;
       background: #a3b8bc;
       border-radius: 0 8px 8px 8px;
@@ -153,6 +156,13 @@ onMounted(() => {
   -moz-box-shadow: 0px 0px 80px -28px rgba(2, 2, 2, 0.16);
   box-shadow: 0px 0px 80px -28px rgba(0, 0, 0, 0.16);
   gap: 10px;
+}
+
+.v-mainPage_messageName {
+  position: relative;
+  font-size: 12px;
+  line-height: 15px;
+  bottom: 6px;
 }
 
 .v-mainPage__chatInputButtonContainer {
@@ -187,6 +197,7 @@ onMounted(() => {
   display: flex;
   padding: 14px 16px;
   word-wrap: break-word;
+  flex-direction: column;
   background: #f0f0f0;
   font-size: 14px;
   line-height: 20px;
