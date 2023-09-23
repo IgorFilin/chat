@@ -22,6 +22,7 @@
           <img
             class="v-header__photoUser"
             :src="store.userPhoto"
+            :key="store.userPhoto"
             alt="Аватар"
           />
           <input id="download" @change="downloadPhoto" hidden type="file" />
@@ -59,7 +60,6 @@ async function onExitAccount() {
 }
 
 function downloadPhoto(event: any) {
-  console.log("1");
   const file = event.target.files[0];
   store.sendAvatarUser(file);
 }

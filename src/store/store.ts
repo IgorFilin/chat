@@ -82,7 +82,7 @@ export const useUserStore: any = defineStore("userData", {
         this.id = result.data.id;
 
         const resultImage = await authApi.getPhoto();
-        const blob = new Blob([resultImage.data], { type: "image/webp" });
+        const blob = new Blob([resultImage.data]);
         const imageSrc = URL.createObjectURL(blob);
         this.userPhoto = imageSrc;
       } catch (error) {
@@ -141,6 +141,13 @@ export const useUserStore: any = defineStore("userData", {
         const formDataFile = new FormData();
         formDataFile.append("avatar", file);
         const result = await authApi.setPhoto(this.id, formDataFile);
+        if (this.userPhoto) {
+          URL.revokeObjectURL(this.userPhoto);
+        }
+        console.log(result);
+        const blob = new Blob([result.data]);
+        const imageSrc = URL.createObjectURL(blob);
+        this.userPhoto = imageSrc;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           const err = error as AxiosError<{ message: string }>;
@@ -151,8 +158,8 @@ export const useUserStore: any = defineStore("userData", {
           }
         }
       } finally {
-        toast(this.messages);
-        this.messages = "";
+        // toast(this.messages);
+        // this.messages = "";
       }
     },
   },
