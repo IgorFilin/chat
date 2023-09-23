@@ -140,7 +140,7 @@ export const useUserStore: any = defineStore("userData", {
         }
         const formDataFile = new FormData();
         formDataFile.append("avatar", file);
-        const result = await authApi.setPhoto(formDataFile);
+        const result = await authApi.setPhoto(this.id, formDataFile);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           const err = error as AxiosError<{ message: string }>;
