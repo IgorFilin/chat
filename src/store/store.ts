@@ -135,15 +135,11 @@ export const useUserStore: any = defineStore("userData", {
     },
     async sendAvatarUser(file: any) {
       try {
-        if (
-          !file ||
-          (!file.type.includes("image/webp") &&
-            !file.type.includes("image/png"))
-        ) {
+        if (file.type !== "image/webp" && file.type !== "image/png") {
           return new Error();
         }
-
-        const formDataFile = new FormData(file);
+        const formDataFile = new FormData();
+        formDataFile.append("avatar", file);
         const result = await authApi.setPhoto(formDataFile);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {

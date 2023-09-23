@@ -59,7 +59,9 @@ async function onExitAccount() {
 }
 
 function downloadPhoto(event: any) {
+  console.log("1");
   const file = event.target.files[0];
+  store.sendAvatarUser(file);
 }
 </script>
 
