@@ -39,7 +39,8 @@ export const authApi = {
     return instance.get("user/avatar", { responseType: "blob" });
   },
   setPhoto(formdata: any) {
-    console.log("asd", formdata);
-    return instance.post("user/avatar", { data: formdata });
+    return instance.post("user/avatar", formdata, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   },
 };
