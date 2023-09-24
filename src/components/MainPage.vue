@@ -77,7 +77,7 @@ connection.onmessage = function (event) {
   const binaryData = Uint8Array.from(atob(base64Image), (c) => c.charCodeAt(0));
   const blob = new Blob([binaryData]);
   const imageSrc = URL.createObjectURL(blob);
-  messages.value.push({
+  messages.value.unshift({
     id: data.userId,
     message: data.message,
     name: data.name,
@@ -145,17 +145,27 @@ onMounted(() => {
 }
 .v-mainPage__chatContainer {
   display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: column-reverse;
   padding: 20px;
   width: 75%;
-  height: 100%;
+  height: 650px;
+  overflow-y: auto;
   background: #ffffff;
   -webkit-box-shadow: 0px 0px 80px -28px rgba(0, 0, 0, 0.16);
   -moz-box-shadow: 0px 0px 80px -28px rgba(2, 2, 2, 0.16);
   box-shadow: 0px 0px 80px -28px rgba(0, 0, 0, 0.16);
   gap: 10px;
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: rgb(51, 51, 51);
+    min-height: 24px;
+    border: 3px solid rgb(245, 245, 245);
+  }
+
+  &::-webkit-scrollbar {
+    width: 0.9rem;
+  }
 }
 
 .v-mainPage_messageName {
