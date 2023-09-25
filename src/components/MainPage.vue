@@ -5,7 +5,7 @@
         class="v-mainPage_messageContainer"
         :class="{ me: isMeActiveClass(userId) }"
         v-for="{ date, userPhoto, message, name, userId } in messages"
-        :key="id"
+        :key="userId"
       >
         <img :src="userPhoto" class="v-mainPage_messagePhoto" />
         <div class="v-mainPage_messageContentContainer">
@@ -75,12 +75,17 @@ connection.onerror = function (error) {
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
-  console.log(data);
+  for (let i = 0; i < data.length; i++) {
+    const base64Image = data[i].userPhoto;
+    const binaryData = Uint8Array.from(atob(base64Image), (c) =>
+      c.charCodeAt(0)
+    );
+    const blob = new Blob([binaryData]);
+    const imageSrc = URL.createObjectURL(blob);
+    data[i].userPhoto = imageSrc;
+  }
   messages.value = data;
-  // const base64Image = data.userPhoto;
-  // const binaryData = Uint8Array.from(atob(base64Image), (c) => c.charCodeAt(0));
-  // const blob = new Blob([binaryData]);
-  // const imageSrc = URL.createObjectURL(blob);
+
   // console.log(data);
   // messages.value = event.data;
   // console.log(messages.value);
