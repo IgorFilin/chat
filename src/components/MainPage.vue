@@ -3,8 +3,9 @@
     <div class="v-mainPage__chatContainer">
       <div
         class="v-mainPage_messageContainer"
-        :class="{ me: isMeActiveClass(id) }"
-        v-for="{ date, userPhoto, message, name, id } in messages"
+        :class="{ me: isMeActiveClass(userId) }"
+        v-for="{ date, userPhoto, message, name, userId } in messages"
+        :key="id"
       >
         <img :src="userPhoto" class="v-mainPage_messagePhoto" />
         <div class="v-mainPage_messageContentContainer">
@@ -48,7 +49,8 @@ const connection = new WebSocket(`ws://localhost:3000?userID=${store.id}`);
 
 connection.onopen = function (event) {
   console.log("Соединение открыто");
-  console.log(store.id);
+  console.log(event);
+  // messages.value = JSON.parse(event);
 };
 
 function sendMessage() {
@@ -73,16 +75,15 @@ connection.onerror = function (error) {
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
-  const base64Image = data.userPhoto;
-  const binaryData = Uint8Array.from(atob(base64Image), (c) => c.charCodeAt(0));
-  const blob = new Blob([binaryData]);
-  const imageSrc = URL.createObjectURL(blob);
-  messages.value.unshift({
-    id: data.userId,
-    message: data.message,
-    name: data.name,
-    userPhoto: imageSrc,
-  });
+  console.log(data);
+  messages.value = data;
+  // const base64Image = data.userPhoto;
+  // const binaryData = Uint8Array.from(atob(base64Image), (c) => c.charCodeAt(0));
+  // const blob = new Blob([binaryData]);
+  // const imageSrc = URL.createObjectURL(blob);
+  // console.log(data);
+  // messages.value = event.data;
+  // console.log(messages.value);
 };
 
 function isMeActiveClass(id) {
