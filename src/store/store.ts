@@ -4,6 +4,7 @@ import { LoginUserType } from "@/api/typesApi";
 import { useToast } from "vue-toastification";
 import axios, { AxiosError } from "axios";
 import { dataRegisterUser } from "@/api/dataRegisterUser";
+import { errorStore } from "@/utils/storeError";
 
 interface UserType {
   name: string;
@@ -42,10 +43,7 @@ export const useUserStore: any = defineStore("userData", {
         this.isAuth = result.data.isAuth;
         this.id = result.data.id;
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          const err = error as AxiosError<{ message: string }>;
-          this.messages = err.response ? err.response?.data.message : "Ошибка";
-        }
+        this.messages = errorStore(error);
       } finally {
         this.isLoading = false;
         toast(this.messages);
@@ -58,14 +56,7 @@ export const useUserStore: any = defineStore("userData", {
         this.confirmReg = result.data.isRegConfirm;
         this.messages = result.data.message;
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          const err = error as AxiosError<{ message: string }>;
-          if (err.response) {
-            this.messages = Array.isArray(err.response?.data.message)
-              ? err.response?.data.message[0]
-              : "Ошибка";
-          }
-        }
+        errorStore(error);
       } finally {
         this.isLoading = false;
         toast(this.messages);
@@ -85,10 +76,7 @@ export const useUserStore: any = defineStore("userData", {
         const imageSrc = URL.createObjectURL(blob);
         this.userPhoto = imageSrc;
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          const err = error as AxiosError<{ message: string }>;
-          this.messages = err.response ? err.response?.data.message : "Ошибка";
-        }
+        this.messages = errorStore(error);
       } finally {
         this.isLoading = false;
       }
@@ -101,11 +89,7 @@ export const useUserStore: any = defineStore("userData", {
         this.name = "";
         toast("Вы успешно вышли, возвращайтесь!");
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          const err = error as AxiosError<{ message: string }>;
-          this.messages = err.response ? err.response?.data.message : "Ошибка";
-          toast(this.messages);
-        }
+        this.messages = errorStore(error);
       } finally {
         this.isLoading = false;
       }
@@ -118,14 +102,7 @@ export const useUserStore: any = defineStore("userData", {
         this.messages = result.data.message;
         await this.auth();
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          const err = error as AxiosError<{ message: string }>;
-          if (err.response) {
-            this.messages = Array.isArray(err.response?.data.message)
-              ? err.response?.data.message[0]
-              : "Ошибка";
-          }
-        }
+        this.messages = errorStore(error);
       } finally {
         this.isLoading = false;
         toast(this.messages);
@@ -148,17 +125,8 @@ export const useUserStore: any = defineStore("userData", {
         const imageSrc = URL.createObjectURL(blob);
         this.userPhoto = imageSrc;
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          const err = error as AxiosError<{ message: string }>;
-          if (err.response) {
-            this.messages = Array.isArray(err.response?.data.message)
-              ? err.response?.data.message[0]
-              : "Ошибка";
-          }
-        }
-      } finally {
-        // toast(this.messages);
-        // this.messages = "";
+        this.messages = errorStore(error);
+        toast(this.messages);
       }
     },
     toast(messages: string) {
