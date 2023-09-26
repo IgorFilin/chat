@@ -15,6 +15,11 @@ export interface ResponseLoginType {
   isAuth: true;
   id: string;
 }
+export interface dataRegisterUser {
+  name: string;
+  email: string;
+  password: string | number;
+}
 
 export interface ResponseLogoutType {
   isAuth: boolean;

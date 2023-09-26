@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
-import { authApi } from "@/api/auth.ts";
+import { authApi } from "@/api/appApi";
 import { LoginUserType } from "@/api/typesApi";
 import { useToast } from "vue-toastification";
 import axios, { AxiosError } from "axios";
-import { dataRegisterUser } from "@/api/dataRegisterUser";
+import { dataRegisterUser } from "@/api/typesApi";
 import { errorStore } from "@/utils/storeError";
 
 interface UserType {
@@ -120,7 +120,6 @@ export const useUserStore: any = defineStore("userData", {
         if (this.userPhoto) {
           URL.revokeObjectURL(this.userPhoto);
         }
-        console.log(result);
         const blob = new Blob([result.data]);
         const imageSrc = URL.createObjectURL(blob);
         this.userPhoto = imageSrc;
