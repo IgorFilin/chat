@@ -112,7 +112,8 @@ export const useUserStore: any = defineStore("userData", {
     async sendAvatarUser(file: any) {
       try {
         if (file.type !== "image/webp" && file.type !== "image/png") {
-          return new Error();
+          toast("Пожалуйста выберите изоражение формата webp или png");
+          return;
         }
         const formDataFile = new FormData();
         formDataFile.append("avatar", file);

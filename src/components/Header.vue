@@ -25,7 +25,13 @@
             :key="store.userPhoto"
             alt="Аватар"
           />
-          <input id="download" @change="downloadPhoto" hidden type="file" />
+          <input
+            id="download"
+            @change="downloadPhoto"
+            hidden
+            type="file"
+            accept="image/webp,image/png"
+          />
         </div>
       </label>
       <div class="v-header__userName" v-if="store.name">
