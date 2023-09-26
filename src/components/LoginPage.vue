@@ -1,11 +1,11 @@
 <template>
-  <div class="registration-container">
-    <h2 class="registration-title">Логинизация</h2>
-    <div class="form-group">
+  <div class="v-registration-container">
+    <h2 class="v-registration-title">Логинизация</h2>
+    <div class="v-form-group">
       <label for="email">Email:</label>
       <input autocomplete="on" auto type="email" id="email" v-model="email" />
     </div>
-    <div class="form-group">
+    <div class="v-form-group">
       <label for="password">Пароль:</label>
       <input
         autocomplete="on"
@@ -15,12 +15,12 @@
         v-model="password"
       />
     </div>
-    <button class="registration-button" @click="submitForm">Войти</button>
+    <button class="v-registration-button" @click="submitForm">Войти</button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onBeforeUpdate, onMounted, onUpdated, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useUserStore } from "@/store/store.ts";
 import { LoginUserType } from "@/api/typesApi";
 import router from "@/router/router";
@@ -48,7 +48,7 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.registration-container {
+.v-registration-container {
   background-color: #202020;
   padding: 20px;
   color: white;
@@ -62,17 +62,17 @@ watch(
   margin: 20vh auto;
 }
 
-.registration-title {
+.v-registration-title {
   font-size: 24px;
   margin-bottom: 20px;
 }
 
-.registration-form {
+.v-registration-form {
   display: flex;
   flex-direction: column;
 }
 
-.form-group {
+.v-form-group {
   margin-bottom: 15px;
   display: flex;
   flex-direction: column;
@@ -95,7 +95,7 @@ input:focus {
   outline: none;
 }
 
-.registration-button {
+.v-registration-button {
   padding: 10px 20px;
   background-color: red;
   color: white;

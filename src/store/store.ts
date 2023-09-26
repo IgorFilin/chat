@@ -4,7 +4,6 @@ import { LoginUserType } from "@/api/typesApi";
 import { useToast } from "vue-toastification";
 import axios, { AxiosError } from "axios";
 import { dataRegisterUser } from "@/api/dataRegisterUser";
-import uuid from "uuid-random";
 
 interface UserType {
   name: string;
@@ -161,6 +160,9 @@ export const useUserStore: any = defineStore("userData", {
         // toast(this.messages);
         // this.messages = "";
       }
+    },
+    toast(messages: string) {
+      toast(messages);
     },
   },
 });

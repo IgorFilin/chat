@@ -47,11 +47,7 @@ if (!store.isAuth) {
 
 const connection = new WebSocket(`ws://localhost:3000?userID=${store.id}`);
 
-connection.onopen = function (event) {
-  console.log("Соединение открыто");
-  console.log(event);
-  // messages.value = JSON.parse(event);
-};
+connection.onopen = function (event) {};
 
 function sendMessage() {
   if (connection.readyState === 1) {
@@ -65,14 +61,6 @@ function sendMessage() {
   }
 }
 
-connection.onclose = function (eventclose) {
-  console.log("Соединение закрыто причина: " + eventclose);
-};
-
-connection.onerror = function (error) {
-  console.error("WebSocket Error:", error);
-};
-
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
   for (let i = 0; i < data.length; i++) {
@@ -85,10 +73,6 @@ connection.onmessage = function (event) {
     data[i].userPhoto = imageSrc;
   }
   messages.value = data;
-
-  // console.log(data);
-  // messages.value = event.data;
-  // console.log(messages.value);
 };
 
 function isMeActiveClass(id) {
