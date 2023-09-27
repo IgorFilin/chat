@@ -82,17 +82,22 @@ function sendMessage() {
 }
 
 connection.onmessage = function (event) {
+  console.log(JSON.parse(event.data));
   const data = JSON.parse(event.data);
   for (let i = 0; i < data.length; i++) {
-    const base64Image = data[i].userPhoto;
+    const base64Image = data[i].messages.userPhoto;
     const binaryData = Uint8Array.from(atob(base64Image), (c) =>
       c.charCodeAt(0)
     );
     const blob = new Blob([binaryData]);
     const imageSrc = URL.createObjectURL(blob);
-    data[i].userPhoto = imageSrc;
+    data[i].messages.userPhoto = imageSrc;
   }
-  messages.value = data;
+  messages.value = data.messages;
+  if (data.clients) {
+    console.log(data.clients.length);
+    usersOnline.value = data.clients;
+  }
 };
 
 function isMeActiveClass(id) {
