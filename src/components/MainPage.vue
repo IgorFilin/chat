@@ -1,5 +1,15 @@
 <template>
   <div class="v-mainPage">
+    <div
+      class="v-mainPage_usersOnlineContainer"
+      :class="{ active: isActiveUserContainer }"
+      @click="onActiveUserContainer"
+    >
+      <input class="v-mainPage_usersOnlineSearch" type="text" />
+      <div class="v-mainPage_userOnline" v-for="user in usersOnline">
+        {{ user.name }}
+      </div>
+    </div>
     <div class="v-mainPage__chatContainer">
       <div
         class="v-mainPage_messageContainer"
@@ -38,6 +48,16 @@ import { onMounted, ref } from "vue";
 
 const message = ref("");
 const messages = ref([]);
+const usersOnline = ref([
+  { name: "igor" },
+  { name: "alica" },
+  { name: "ivan" },
+]);
+const isActiveUserContainer = ref(false);
+
+function onActiveUserContainer() {
+  isActiveUserContainer.value = !isActiveUserContainer.value;
+}
 
 const store = useUserStore();
 
@@ -88,6 +108,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .v-mainPage {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -156,6 +177,64 @@ onMounted(() => {
   &::-webkit-scrollbar {
     width: 0.9rem;
   }
+}
+
+.v-mainPage_usersOnlineContainer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 20px 50px;
+  box-sizing: border-box;
+  width: 300px;
+  height: 700px;
+  background-color: #1e1c1c;
+  border-radius: 30px 0 20px 0;
+  box-shadow: 0px 0px 80px -28px rgba(0, 0, 0, 0.16);
+  transition: 0.5s;
+  left: -300px;
+  gap: 15px;
+  z-index: 9;
+
+  &.active {
+    left: 2px;
+  }
+
+  &::before {
+    content: "";
+    display: block;
+    height: 30px;
+    width: 30px;
+    border: inherit;
+    position: absolute;
+    clip-path: polygon(0% 0%, 100% 100%, 0% 100%);
+    transform: rotate(225deg);
+    z-index: 99;
+    background-color: #202020;
+    right: -14px;
+    top: 50%;
+    border-radius: 0 0 0 0.25em;
+    transition: 0.5s;
+    cursor: pointer;
+  }
+}
+
+.v-mainPage_usersOnlineSearch {
+  background-color: #ededed;
+  border: 1px solid #141416;
+  display: inline-block;
+  vertical-align: middle;
+  resize: none;
+  padding: 5px;
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.v-mainPage_userOnline {
+  font-size: 17px;
+  line-height: 20px;
+  color: white;
 }
 
 .v-mainPage_messageName {

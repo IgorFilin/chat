@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import { authApi } from "@/api/appApi";
 import { LoginUserType } from "@/api/typesApi";
 import { useToast } from "vue-toastification";
-import axios, { AxiosError } from "axios";
 import { dataRegisterUser } from "@/api/typesApi";
 import { errorStore } from "@/utils/storeError";
 
