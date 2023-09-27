@@ -48,11 +48,7 @@ import { onMounted, ref } from "vue";
 
 const message = ref("");
 const messages = ref([]);
-const usersOnline = ref([
-  { name: "igor" },
-  { name: "alica" },
-  { name: "ivan" },
-]);
+const usersOnline = ref([]);
 const isActiveUserContainer = ref(false);
 
 function onActiveUserContainer() {
@@ -82,20 +78,21 @@ function sendMessage() {
 }
 
 connection.onmessage = function (event) {
-  console.log(JSON.parse(event.data));
   const data = JSON.parse(event.data);
-  for (let i = 0; i < data.length; i++) {
-    const base64Image = data[i].messages.userPhoto;
-    const binaryData = Uint8Array.from(atob(base64Image), (c) =>
-      c.charCodeAt(0)
-    );
-    const blob = new Blob([binaryData]);
-    const imageSrc = URL.createObjectURL(blob);
-    data[i].messages.userPhoto = imageSrc;
-  }
-  messages.value = data.messages;
-  if (data.clients) {
-    console.log(data.clients.length);
+  console.log(data);
+
+  if (data.messages) {
+    for (let i = 0; i < data.messages.length; i++) {
+      const base64Image = data.messages[i].userPhoto;
+      const binaryData = Uint8Array.from(atob(base64Image), (c) =>
+        c.charCodeAt(0)
+      );
+      const blob = new Blob([binaryData]);
+      const imageSrc = URL.createObjectURL(blob);
+      data.messages[i].userPhoto = imageSrc;
+    }
+    messages.value = data.messages;
+  } else {
     usersOnline.value = data.clients;
   }
 };
