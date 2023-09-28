@@ -44,7 +44,7 @@
 <script setup>
 import { useUserStore } from "@/store/store.ts";
 import router from "@/router/router";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 const message = ref("");
 const messages = ref([]);
@@ -64,6 +64,10 @@ if (!store.isAuth) {
 const connection = new WebSocket(`ws://localhost:3000?userID=${store.id}`);
 
 connection.onopen = function (event) {};
+
+connection.onclose = function (event) {
+  console.log(event);
+};
 
 function sendMessage() {
   if (connection.readyState === 1) {
@@ -92,7 +96,8 @@ connection.onmessage = function (event) {
       data.messages[i].userPhoto = imageSrc;
     }
     messages.value = data.messages;
-  } else {
+  }
+  if (data.clients) {
     usersOnline.value = data.clients;
   }
 };
@@ -105,6 +110,10 @@ function isMeActiveClass(id) {
 
 onMounted(() => {
   connection.onopen();
+});
+
+onUnmounted(() => {
+  connection.close();
 });
 </script>
 
