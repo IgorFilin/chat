@@ -3,10 +3,17 @@
     <div
       class="v-mainPage_usersOnlineContainer"
       :class="{ active: isActiveUserContainer }"
-      @click="onActiveUserContainer"
     >
-      <input class="v-mainPage_usersOnlineSearch" type="text" />
-      <div class="v-mainPage_userOnline" v-for="user in usersOnline">
+      <div
+        class="v-mainPage_usersOnlineContainerClickElem"
+        @click="onActiveUserContainer"
+      />
+      <input
+        class="v-mainPage_usersOnlineSearch"
+        type="search"
+        v-model="searchedUser"
+      />
+      <div class="v-mainPage_userOnline" v-for="user in currentUsers">
         {{ user.name }}
       </div>
     </div>
@@ -44,12 +51,13 @@
 <script setup>
 import { useUserStore } from "@/store/store.ts";
 import router from "@/router/router";
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, onUpdated, ref, computed } from "vue";
 
 const message = ref("");
 const messages = ref([]);
 const usersOnline = ref([]);
 const isActiveUserContainer = ref(false);
+const searchedUser = ref("");
 
 function onActiveUserContainer() {
   isActiveUserContainer.value = !isActiveUserContainer.value;
@@ -60,6 +68,8 @@ const store = useUserStore();
 if (!store.isAuth) {
   router.push("/login");
 }
+
+// WebScoket function  //////////////////////////////////////////////////////////////
 
 const connection = new WebSocket(`ws://localhost:3000?userID=${store.id}`);
 
@@ -102,11 +112,23 @@ connection.onmessage = function (event) {
   }
 };
 
+///////////////////////////////////////////////////////////////////////////////////
+
 function isMeActiveClass(id) {
   if (id) {
     return id === store.id;
   }
 }
+
+const currentUsers = computed(() => {
+  const seachValue = searchedUser.value.toLowerCase().trim();
+  if (!seachValue) {
+    return usersOnline.value;
+  }
+  return usersOnline.value.filter((user) => {
+    return user.name.toLowerCase().trim().includes(seachValue);
+  });
+});
 
 onMounted(() => {
   connection.onopen();
@@ -190,6 +212,23 @@ onUnmounted(() => {
   }
 }
 
+.v-mainPage_usersOnlineContainerClickElem {
+  content: "";
+  display: block;
+  height: 30px;
+  width: 30px;
+  border: inherit;
+  position: absolute;
+  clip-path: polygon(0% 0%, 100% 100%, 0% 100%);
+  transform: rotate(225deg);
+  z-index: 99;
+  background-color: #202020;
+  right: -14px;
+  top: 50%;
+  border-radius: 0 0 0 0.25em;
+  transition: 0.5s;
+  cursor: pointer;
+}
 .v-mainPage_usersOnlineContainer {
   position: absolute;
   display: flex;
@@ -209,24 +248,6 @@ onUnmounted(() => {
   &.active {
     left: 2px;
   }
-
-  &::before {
-    content: "";
-    display: block;
-    height: 30px;
-    width: 30px;
-    border: inherit;
-    position: absolute;
-    clip-path: polygon(0% 0%, 100% 100%, 0% 100%);
-    transform: rotate(225deg);
-    z-index: 99;
-    background-color: #202020;
-    right: -14px;
-    top: 50%;
-    border-radius: 0 0 0 0.25em;
-    transition: 0.5s;
-    cursor: pointer;
-  }
 }
 
 .v-mainPage_usersOnlineSearch {
@@ -236,6 +257,7 @@ onUnmounted(() => {
   vertical-align: middle;
   resize: none;
   padding: 5px;
+  margin-bottom: 10px;
 
   &:focus-visible {
     outline: none;
@@ -246,6 +268,10 @@ onUnmounted(() => {
   font-size: 17px;
   line-height: 20px;
   color: white;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .v-mainPage_messageName {
