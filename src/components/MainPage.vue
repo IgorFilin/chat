@@ -17,7 +17,14 @@
         {{ user.name }}
       </div>
     </div>
-    <div class="v-mainPage__chatContainer">
+    <div
+      class="v-mainPage__chatContainer"
+      :class="{ drag: onDragClass }"
+      @dragstart.prevent
+      @dragover.prevent="OnDragChatContainer"
+      @dragleave.prevent="onDragClass = false"
+      @drop.prevent="OnDropChatContainer"
+    >
       <div
         class="v-mainPage_messageContainer"
         :class="{ me: isMeActiveClass(userId) }"
@@ -58,10 +65,7 @@ const messages = ref([]);
 const usersOnline = ref([]);
 const isActiveUserContainer = ref(false);
 const searchedUser = ref("");
-
-function onActiveUserContainer() {
-  isActiveUserContainer.value = !isActiveUserContainer.value;
-}
+const onDragClass = ref(false);
 
 const store = useUserStore();
 
@@ -114,10 +118,29 @@ connection.onmessage = function (event) {
 
 ///////////////////////////////////////////////////////////////////////////////////
 
+//Функции /////////////////////////////////////////////////////////////////////////
+
 function isMeActiveClass(id) {
   if (id) {
     return id === store.id;
   }
+}
+
+function onActiveUserContainer() {
+  isActiveUserContainer.value = !isActiveUserContainer.value;
+}
+
+function OnDragChatContainer(event) {
+  event.preventDefault();
+  if (!onDragClass.value) {
+    onDragClass.value = true;
+  }
+}
+
+function OnDropChatContainer(event) {
+  event.preventDefault();
+  onDragClass.value = false;
+  console.log(event);
 }
 
 const currentUsers = computed(() => {
@@ -130,6 +153,9 @@ const currentUsers = computed(() => {
   });
 });
 
+////////////////////////////////////////////////////////////////////////////////////////////
+
+// Жизненный цикл //////////////////////////////////////////////////////////////////////////
 onMounted(() => {
   connection.onopen();
 });
@@ -137,6 +163,7 @@ onMounted(() => {
 onUnmounted(() => {
   connection.close();
 });
+///////////////////////////////////////////////////////////////////////////////////////////
 </script>
 
 <style scoped lang="scss">
@@ -207,6 +234,10 @@ onUnmounted(() => {
 
   &::-webkit-scrollbar {
     width: 0.9rem;
+  }
+
+  &.drag {
+    opacity: 0.4;
   }
 }
 
