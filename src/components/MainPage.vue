@@ -141,7 +141,6 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .v-mainPage {
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -174,7 +173,6 @@ onUnmounted(() => {
       align-self: flex-start;
       background: #a3b8bc;
       border-radius: 0 8px 8px 8px;
-      position: relative;
 
       // &:after {
       //   content: "";
