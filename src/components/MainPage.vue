@@ -35,7 +35,13 @@
         <div class="v-mainPage_messageContentContainer">
           <div class="v-mainPage_message">
             <div class="v-mainPage_messageName">{{ name }}</div>
-            <div>{{ message }}</div>
+            <div v-if="getTegMessage(message) === 'div'">{{ message }}</div>
+            <img
+              v-if="getTegMessage(message) === 'img'"
+              class="v-mainPage_messageImage"
+              :src="message"
+              alt="картинка"
+            />
           </div>
           <div>{{ date }}</div>
         </div>
@@ -55,14 +61,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useUserStore } from "@/store/store.ts";
 import router from "@/router/router";
-import { onMounted, onUnmounted, onUpdated, ref, computed } from "vue";
+import { onMounted, onUnmounted, ref, computed } from "vue";
 
 const message = ref("");
 const messages = ref([]);
-const usersOnline = ref([]);
+const usersOnline = ref([]) as any;
 const isActiveUserContainer = ref(false);
 const searchedUser = ref("");
 const onDragClass = ref(false);
@@ -105,9 +111,16 @@ connection.onmessage = function (event) {
       const binaryData = Uint8Array.from(atob(base64Image), (c) =>
         c.charCodeAt(0)
       );
-      const blob = new Blob([binaryData]);
-      const imageSrc = URL.createObjectURL(blob);
+      const blobImage = new Blob([binaryData]);
+      const imageSrc = URL.createObjectURL(blobImage);
       data.messages[i].userPhoto = imageSrc;
+
+      if (data.messages[i].message.type === "Buffer") {
+        const bufferData = new Uint8Array(data.messages[i].message.data); // Преобразовываем Buffer в Uint8Array
+        const blobMessage = new Blob([bufferData]);
+        const imageUrl = URL.createObjectURL(blobMessage);
+        data.messages[i].message = imageUrl;
+      }
     }
     messages.value = data.messages;
   }
@@ -120,7 +133,7 @@ connection.onmessage = function (event) {
 
 //Функции /////////////////////////////////////////////////////////////////////////
 
-function isMeActiveClass(id) {
+function isMeActiveClass(id: string) {
   if (id) {
     return id === store.id;
   }
@@ -130,25 +143,55 @@ function onActiveUserContainer() {
   isActiveUserContainer.value = !isActiveUserContainer.value;
 }
 
-function OnDragChatContainer(event) {
+function OnDragChatContainer(event: any) {
   event.preventDefault();
   if (!onDragClass.value) {
     onDragClass.value = true;
   }
 }
 
-function OnDropChatContainer(event) {
+function OnDropChatContainer(event: any) {
   event.preventDefault();
   onDragClass.value = false;
-  console.log(event);
+  const file = event.dataTransfer.files[0];
+
+  const reader = new FileReader();
+
+  reader.onload = function (event) {
+    const arrayBuffer = event.target.result;
+
+    if (connection.readyState === 1) {
+      connection.send(
+        JSON.stringify({
+          event: "message",
+          data: {
+            message: Array.from(new Uint8Array(arrayBuffer)),
+            id: store.id,
+          },
+        })
+      );
+    }
+  };
+
+  reader.readAsArrayBuffer(file);
 }
+
+function getTegMessage(message: string) {
+  if (message.includes("blob:http")) {
+    return "img";
+  } else {
+    return "div";
+  }
+}
+
+// Computed ////////////////////////////////////////////////////////////////////////////////
 
 const currentUsers = computed(() => {
   const seachValue = searchedUser.value.toLowerCase().trim();
   if (!seachValue) {
     return usersOnline.value;
   }
-  return usersOnline.value.filter((user) => {
+  return usersOnline.value.filter((user: any) => {
     return user.name.toLowerCase().trim().includes(seachValue);
   });
 });
@@ -157,7 +200,7 @@ const currentUsers = computed(() => {
 
 // Жизненный цикл //////////////////////////////////////////////////////////////////////////
 onMounted(() => {
-  connection.onopen();
+  // connection.onopen();
 });
 
 onUnmounted(() => {
@@ -211,6 +254,10 @@ onUnmounted(() => {
       // }
     }
   }
+}
+
+.v-mainPage_messageImage {
+  max-width: 400px;
 }
 .v-mainPage__chatContainer {
   display: flex;
