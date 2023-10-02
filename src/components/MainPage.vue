@@ -20,6 +20,7 @@
     <div
       class="v-mainPage__chatContainer"
       :class="{ drag: onDragClass }"
+      @scroll="onScroll"
       @dragstart.prevent
       @dragover.prevent="OnDragChatContainer"
       @dragleave.prevent="onDragClass = false"
@@ -181,6 +182,18 @@ function getTegMessage(message: string) {
     return "img";
   } else {
     return "div";
+  }
+}
+
+function onScroll(event: any) {
+  const container = event.target as HTMLElement; // Получаем контейнер, на который произошло событие скроллинга
+  console.log(container.scrollTop);
+  console.log(container.clientHeight);
+  console.log(container.scrollHeight);
+  // Проверяем, достиг ли пользователь нижней границы контейнера
+  if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
+    // Достигнут конец страницы
+    console.log("Достигнут конец страницы");
   }
 }
 
