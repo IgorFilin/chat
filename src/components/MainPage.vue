@@ -37,6 +37,7 @@
           <div class="v-mainPage_message">
             <div class="v-mainPage_messageName">{{ name }}</div>
             <div v-if="getTegMessage(message) === 'div'">{{ message }}</div>
+            <MyComponent tag="div" />
             <img
               v-if="getTegMessage(message) === 'img'"
               class="v-mainPage_messageImage"
@@ -66,6 +67,7 @@
 import { useUserStore } from "@/store/store.ts";
 import router from "@/router/router";
 import { onMounted, onUnmounted, ref, computed } from "vue";
+import MyComponent from "@/components/assetsComponent/Component.vue";
 
 const message = ref("");
 const messages = ref([]);
