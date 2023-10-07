@@ -29,21 +29,21 @@
       <div
         class="v-mainPage_messageContainer"
         :class="{ me: isMeActiveClass(userId) }"
-        v-for="{ date, userPhoto, message, name, userId } in messages"
+        v-for="({ date, userPhoto, message, name, userId }, index) in messages"
         :key="userId"
       >
         <img :src="userPhoto" class="v-mainPage_messagePhoto" />
         <div class="v-mainPage_messageContentContainer">
           <div class="v-mainPage_message">
             <div class="v-mainPage_messageName">{{ name }}</div>
-            <div v-if="getTegMessage(message) === 'div'">{{ message }}</div>
-            <MyComponent tag="div" />
-            <img
+            <!-- <div v-if="getTegMessage(message) === 'div'">{{ message }}</div> -->
+            <MyComponent :tag="getTegMessage(message)" :message="message" />
+            <!-- <img
               v-if="getTegMessage(message) === 'img'"
               class="v-mainPage_messageImage"
               :src="message"
               alt="картинка"
-            />
+            /> -->
           </div>
           <div>{{ date }}</div>
         </div>
@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import { useUserStore } from "@/store/store.ts";
 import router from "@/router/router";
-import { onMounted, onUnmounted, ref, computed } from "vue";
+import { onMounted, onUnmounted, ref, computed, onUpdated } from "vue";
 import MyComponent from "@/components/assetsComponent/Component.vue";
 
 const message = ref("");
@@ -75,7 +75,7 @@ const usersOnline = ref([]) as any;
 const isActiveUserContainer = ref(false);
 const searchedUser = ref("");
 const onDragClass = ref(false);
-
+onUpdated(() => console.log(messages.value.length));
 const store = useUserStore();
 
 if (!store.isAuth) {
@@ -180,8 +180,11 @@ function OnDropChatContainer(event: any) {
 }
 
 function getTegMessage(message: string) {
+  const patternLink = /^(https?:\/\/)/;
   if (message.includes("blob:http")) {
     return "img";
+  } else if (patternLink.test(message)) {
+    return "a";
   } else {
     return "div";
   }
@@ -189,13 +192,9 @@ function getTegMessage(message: string) {
 
 function onScroll(event: any) {
   const container = event.target as HTMLElement; // Получаем контейнер, на который произошло событие скроллинга
-  console.log(container.scrollTop);
-  console.log(container.clientHeight);
-  console.log(container.scrollHeight);
   // Проверяем, достиг ли пользователь нижней границы контейнера
   if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
     // Достигнут конец страницы
-    console.log("Достигнут конец страницы");
   }
 }
 
