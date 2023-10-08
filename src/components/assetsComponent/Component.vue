@@ -1,5 +1,5 @@
 <script>
-import { h, defineComponent, computed, ref, onUpdated } from "vue";
+import { h, defineComponent, computed, ref } from "vue";
 
 export default defineComponent({
   props: {
@@ -10,12 +10,13 @@ export default defineComponent({
     const { tag, message } = props;
     console.log("tag", tag);
     console.log("message", message);
-    const selectedTag = ref({
+    const selectedTag = {
       img: "src",
       a: "href",
-    });
-    onUpdated(() => "update");
-    const attribute = computed(() => ({ [selectedTag.value[tag]]: message }));
+    };
+    const attribute = computed(() => ({
+      [selectedTag[tag]]: message,
+    }));
 
     return () => h(tag, attribute.value, message);
   },

@@ -30,20 +30,16 @@
         class="v-mainPage_messageContainer"
         :class="{ me: isMeActiveClass(userId) }"
         v-for="({ date, userPhoto, message, name, userId }, index) in messages"
-        :key="userId"
       >
         <img :src="userPhoto" class="v-mainPage_messagePhoto" />
         <div class="v-mainPage_messageContentContainer">
           <div class="v-mainPage_message">
             <div class="v-mainPage_messageName">{{ name }}</div>
-            <!-- <div v-if="getTegMessage(message) === 'div'">{{ message }}</div> -->
-            <MyComponent :tag="getTegMessage(message)" :message="message" />
-            <!-- <img
-              v-if="getTegMessage(message) === 'img'"
-              class="v-mainPage_messageImage"
-              :src="message"
-              alt="картинка"
-            /> -->
+            <MyComponent
+              :key="message"
+              :tag="getTegMessage(message)"
+              :message="message"
+            />
           </div>
           <div>{{ date }}</div>
         </div>
@@ -66,7 +62,7 @@
 <script setup lang="ts">
 import { useUserStore } from "@/store/store.ts";
 import router from "@/router/router";
-import { onMounted, onUnmounted, ref, computed, onUpdated } from "vue";
+import { onMounted, onUnmounted, ref, computed } from "vue";
 import MyComponent from "@/components/assetsComponent/Component.vue";
 
 const message = ref("");
@@ -75,7 +71,6 @@ const usersOnline = ref([]) as any;
 const isActiveUserContainer = ref(false);
 const searchedUser = ref("");
 const onDragClass = ref(false);
-onUpdated(() => console.log(messages.value.length));
 const store = useUserStore();
 
 if (!store.isAuth) {
@@ -326,7 +321,8 @@ onUnmounted(() => {
   padding: 20px 20px 20px 50px;
   box-sizing: border-box;
   width: 300px;
-  height: 700px;
+  height: 80%;
+  max-height: 700px;
   background-color: #1e1c1c;
   border-radius: 30px 0 20px 0;
   box-shadow: 0px 0px 80px -28px rgba(0, 0, 0, 0.16);
