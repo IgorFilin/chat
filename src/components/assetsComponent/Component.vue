@@ -11,12 +11,17 @@ export default defineComponent({
     console.log("tag", tag);
     console.log("message", message);
     const selectedTag = {
-      img: "src",
+      img: {
+        src: "",
+        class: "v-mainPage_messageImage",
+      },
       a: "href",
     };
     const attribute = computed(() => ({
-      [selectedTag[tag]]: message,
+      ...selectedTag[tag],
+      src: tag === "img" && message,
     }));
+    console.log(attribute.value);
 
     return () => h(tag, attribute.value, message);
   },
