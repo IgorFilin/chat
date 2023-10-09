@@ -102,26 +102,26 @@ function sendMessage() {
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
   console.log(data);
+  const imageUrls = data.messages.map((message: any) => {
+    const base64Image = message.userPhoto;
+    const binaryData = Uint8Array.from(atob(base64Image), (c) =>
+      c.charCodeAt(0)
+    );
+    const blobImage = new Blob([binaryData]);
+    return URL.createObjectURL(blobImage);
+  });
 
-  if (data.messages) {
-    for (let i = 0; i < data.messages.length; i++) {
-      const base64Image = data.messages[i].userPhoto;
-      const binaryData = Uint8Array.from(atob(base64Image), (c) =>
-        c.charCodeAt(0)
-      );
-      const blobImage = new Blob([binaryData]);
-      const imageSrc = URL.createObjectURL(blobImage);
-      data.messages[i].userPhoto = imageSrc;
+  for (let i = 0; i < data.messages.length; i++) {
+    data.messages[i].userPhoto = imageUrls[i];
 
-      if (data.messages[i].message.type === "Buffer") {
-        const bufferData = new Uint8Array(data.messages[i].message.data); // Преобразовываем Buffer в Uint8Array
-        const blobMessage = new Blob([bufferData]);
-        const imageUrl = URL.createObjectURL(blobMessage);
-        data.messages[i].message = imageUrl;
-      }
+    if (data.messages[i].message.type === "Buffer") {
+      const bufferData = new Uint8Array(data.messages[i].message.data);
+      const blobMessage = new Blob([bufferData]);
+      data.messages[i].message = URL.createObjectURL(blobMessage);
     }
-    messages.value = data.messages;
   }
+
+  messages.value = data.messages;
   if (data.clients) {
     usersOnline.value = data.clients;
   }
