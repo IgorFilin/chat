@@ -102,26 +102,24 @@ function sendMessage() {
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
   console.log(data);
-  const imageUrls = data.messages.map((message: any) => {
-    const base64Image = message.userPhoto;
-    const binaryData = Uint8Array.from(atob(base64Image), (c) =>
-      c.charCodeAt(0)
-    );
-    const blobImage = new Blob([binaryData]);
-    return URL.createObjectURL(blobImage);
-  });
+  // const imageUrls = data.messages.map((message: any) => {
+  const base64Image = data.messages.userPhoto;
+  const binaryData = Uint8Array.from(atob(base64Image), (c) => c.charCodeAt(0));
+  const blobImage = new Blob([binaryData]);
+  URL.createObjectURL(blobImage);
+  // });
 
-  for (let i = 0; i < data.messages.length; i++) {
-    data.messages[i].userPhoto = imageUrls[i];
+  // for (let i = 0; i < data.messages.length; i++) {
+  data.messages.userPhoto = URL.createObjectURL(blobImage);
 
-    if (data.messages[i].message.type === "Buffer") {
-      const bufferData = new Uint8Array(data.messages[i].message.data);
-      const blobMessage = new Blob([bufferData]);
-      data.messages[i].message = URL.createObjectURL(blobMessage);
-    }
+  if (data.messages.message.type === "Buffer") {
+    const bufferData = new Uint8Array(data.messages.message.data);
+    const blobMessage = new Blob([bufferData]);
+    data.messages.message = URL.createObjectURL(blobMessage);
   }
+  // }
 
-  messages.value = data.messages;
+  messages.value.push(data.messages);
   if (data.clients) {
     usersOnline.value = data.clients;
   }
