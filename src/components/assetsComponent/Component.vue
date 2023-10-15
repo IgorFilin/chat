@@ -8,8 +8,6 @@ export default defineComponent({
   },
   setup(props) {
     const { tag, message } = props;
-    console.log("tag", tag);
-    console.log("message", message);
     const selectedTag = {
       img: {
         src: "",
@@ -21,7 +19,6 @@ export default defineComponent({
       ...selectedTag[tag],
       src: tag === "img" && message,
     }));
-    console.log(attribute.value);
 
     return () => h(tag, attribute.value, message);
   },

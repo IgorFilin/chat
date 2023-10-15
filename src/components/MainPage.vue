@@ -102,26 +102,46 @@ function sendMessage() {
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
   console.log(data);
-  const imageUrls = data.messages.map((message: any) => {
-    const base64Image = message.userPhoto;
-    const binaryData = Uint8Array.from(atob(base64Image), (c) =>
-      c.charCodeAt(0)
-    );
-    const blobImage = new Blob([binaryData]);
-    return URL.createObjectURL(blobImage);
-  });
 
-  for (let i = 0; i < data.messages.length; i++) {
-    data.messages[i].userPhoto = imageUrls[i];
+  // for (let i = 0; i < data.messages.length; i++) {
+  //   data.messages[i].userPhoto = imageUrls[i];
 
-    if (data.messages[i].message.type === "Buffer") {
-      const bufferData = new Uint8Array(data.messages[i].message.data);
-      const blobMessage = new Blob([bufferData]);
-      data.messages[i].message = URL.createObjectURL(blobMessage);
-    }
+  //   if (data.messages[i].message.type === "Buffer") {
+  //     const bufferData = new Uint8Array(data.messages[i].message.data);
+  //     const blobMessage = new Blob([bufferData]);
+  //     data.messages[i].message = URL.createObjectURL(blobMessage);
+  //   }
+  // }
+  const messageChunks = [] as any;
+  if (data.messageData) {
+    // Это сообщение с чанком
+    const messageChunk = data.messageData.message;
+    const chunkIndex = data.messageData.chunkIndex;
+
+    // Добавляем чанк в массив
+    messageChunks[chunkIndex] = messageChunk;
+  } else {
+    // Это завершающее сообщение, собираем все чанки
+    const fullMessage = messageChunks.join("");
+
+    // Теперь у вас есть полное сообщение, которое можно обработать
+    console.log("Полное сообщение:", fullMessage);
+
+    // Очищаем массив чанков для будущих сообщений
+    messageChunks.length = 0;
   }
 
-  messages.value = data.messages;
+  if (Array.isArray(data.messages)) {
+    const imageUrls = data.messages.map((message: any) => {
+      const base64Image = message.userPhoto;
+      const binaryData = Uint8Array.from(atob(base64Image), (c) =>
+        c.charCodeAt(0)
+      );
+      const blobImage = new Blob([binaryData]);
+      message.userPhoto = URL.createObjectURL(blobImage);
+    });
+    messages.value = data.messages;
+  }
   if (data.clients) {
     usersOnline.value = data.clients;
   }
