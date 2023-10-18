@@ -66,7 +66,7 @@ import { onMounted, onUnmounted, ref, computed } from "vue";
 import MyComponent from "@/components/assetsComponent/Component.vue";
 
 const message = ref("");
-const messages = ref([]);
+const messages = ref([]) as any;
 const usersOnline = ref([]) as any;
 const isActiveUserContainer = ref(false);
 const searchedUser = ref("");
@@ -101,25 +101,42 @@ function sendMessage() {
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
+
+  if (Array.isArray(data.messages)) {
+    const messagesData = data.messages.map((message: any) => {
+      const base64Image = message.userPhoto;
+      const binaryData = Uint8Array.from(atob(base64Image), (c) =>
+        c.charCodeAt(0)
+      );
+      const blobImage = new Blob([binaryData]);
+      return {
+        name: message.name,
+        userId: message.userId,
+        message: message.message,
+        userPhoto: URL.createObjectURL(blobImage),
+      };
+    });
+    messages.value = messagesData;
+  }
   console.log(data);
-  // const imageUrls = data.messages.map((message: any) => {
-  const base64Image = data.messages.userPhoto;
-  const binaryData = Uint8Array.from(atob(base64Image), (c) => c.charCodeAt(0));
-  const blobImage = new Blob([binaryData]);
-  URL.createObjectURL(blobImage);
-  // });
 
-  // for (let i = 0; i < data.messages.length; i++) {
-  data.messages.userPhoto = URL.createObjectURL(blobImage);
-
-  if (data.messages.message.type === "Buffer") {
+  if (data.messages?.message && data.messages.message.type === "Buffer") {
     const bufferData = new Uint8Array(data.messages.message.data);
     const blobMessage = new Blob([bufferData]);
     data.messages.message = URL.createObjectURL(blobMessage);
   }
-  // }
 
-  messages.value.push(data.messages);
+  if (typeof data.messages?.message === "string") {
+    console.log(data.messages);
+    const base64Image = data.messages.userPhoto;
+    const binaryData = Uint8Array.from(atob(base64Image), (c) =>
+      c.charCodeAt(0)
+    );
+    const blobImage = new Blob([binaryData]);
+    data.messages.userPhoto = URL.createObjectURL(blobImage);
+    messages.value.unshift(data.messages);
+  }
+
   if (data.clients) {
     usersOnline.value = data.clients;
   }
@@ -150,12 +167,9 @@ function OnDropChatContainer(event: any) {
   event.preventDefault();
   onDragClass.value = false;
   const file = event.dataTransfer.files[0];
-
   const reader = new FileReader();
-
   reader.onload = function (event) {
     const arrayBuffer = event.target.result;
-
     if (connection.readyState === 1) {
       connection.send(
         JSON.stringify({
@@ -168,7 +182,6 @@ function OnDropChatContainer(event: any) {
       );
     }
   };
-
   reader.readAsArrayBuffer(file);
 }
 
