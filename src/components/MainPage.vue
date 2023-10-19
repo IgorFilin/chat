@@ -35,11 +35,7 @@
         <div class="v-mainPage_messageContentContainer">
           <div class="v-mainPage_message">
             <div class="v-mainPage_messageName">{{ name }}</div>
-            <MyComponent
-              :key="message"
-              :tag="getTegMessage(message)"
-              :message="message"
-            />
+            <MyComponent :key="message" :message="message" />
           </div>
           <div>{{ date }}</div>
         </div>
@@ -118,7 +114,6 @@ connection.onmessage = function (event) {
     });
     messages.value = messagesData;
   }
-  console.log(data);
 
   if (data.messages?.message && Array.isArray(data.messages.message)) {
     const bufferData = new Uint8Array(data.messages.message);
@@ -127,7 +122,6 @@ connection.onmessage = function (event) {
   }
 
   if (typeof data.messages?.message === "string") {
-    console.log(data.messages);
     const base64Image = data.messages.userPhoto;
     const binaryData = Uint8Array.from(atob(base64Image), (c) =>
       c.charCodeAt(0)
@@ -183,17 +177,6 @@ function OnDropChatContainer(event: any) {
     }
   };
   reader.readAsArrayBuffer(file);
-}
-
-function getTegMessage(message: string) {
-  const patternLink = /^(https?:\/\/)/;
-  if (message.includes("blob:http")) {
-    return "img";
-  } else if (patternLink.test(message)) {
-    return "a";
-  } else {
-    return "div";
-  }
 }
 
 function onScroll(event: any) {
