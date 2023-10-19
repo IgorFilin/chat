@@ -7,19 +7,24 @@ export default defineComponent({
   },
   setup(props) {
     const { message } = props;
-    console.log(message);
     let tag = "div";
-
+    let videoId;
     const patternLink = /^(http|https|www)/;
     const patternBlob = /^blob:http/;
+    const patternYoutubeVideo =
+      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)/;
 
     if (patternBlob.test(message)) {
       tag = "img";
+    } else if (patternYoutubeVideo.test(message)) {
+      const searcheUrl = new URLSearchParams(message.split("?")[1]);
+      videoId = searcheUrl.get("v");
+      tag = "iframe";
     } else if (patternLink.test(message)) {
       tag = "a";
     }
-    console.log(tag);
-
+    console.log(message);
+    console.log(videoId);
     const selectedTag = {
       img: {
         src: message,
@@ -29,12 +34,19 @@ export default defineComponent({
         href: message,
         target: "_blank",
       },
+      iframe: {
+        width: "480",
+        height: "360",
+        src: `https://www.youtube.com/embed/${videoId}`,
+        frameborder: "0",
+        allowfullscreen: true,
+      },
     };
 
     const attribute = computed(() => ({
       ...selectedTag[tag],
     }));
-    console.log(attribute.value);
+
     return () => h(tag, attribute.value, tag !== "img" && message);
   },
 });
