@@ -120,8 +120,8 @@ connection.onmessage = function (event) {
   }
   console.log(data);
 
-  if (data.messages?.message && data.messages.message.type === "Buffer") {
-    const bufferData = new Uint8Array(data.messages.message.data);
+  if (data.messages?.message && Array.isArray(data.messages.message)) {
+    const bufferData = new Uint8Array(data.messages.message);
     const blobMessage = new Blob([bufferData]);
     data.messages.message = URL.createObjectURL(blobMessage);
   }
