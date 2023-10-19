@@ -99,6 +99,8 @@ function downloadPhoto(event: any) {
   width: 40px;
   height: 40px;
   transition: 0.5s;
+  border-radius: 50%;
+  object-fit: cover;
 
   &:hover {
     transition: 0.5s;

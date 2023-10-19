@@ -41,6 +41,7 @@ export const useUserStore: any = defineStore("userData", {
         this.name = result.data.name;
         this.isAuth = result.data.isAuth;
         this.id = result.data.id;
+        this.getAvatar();
       } catch (error) {
         this.messages = errorStore(error);
       } finally {
@@ -69,15 +70,21 @@ export const useUserStore: any = defineStore("userData", {
         this.isAuth = result.data.isAuth;
         this.name = result.data.name;
         this.id = result.data.id;
-
+        this.getAvatar();
+      } catch (error) {
+        this.messages = errorStore(error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async getAvatar() {
+      try {
         const resultImage = await authApi.getPhoto();
         const blob = new Blob([resultImage.data]);
         const imageSrc = URL.createObjectURL(blob);
         this.userPhoto = imageSrc;
       } catch (error) {
         this.messages = errorStore(error);
-      } finally {
-        this.isLoading = false;
       }
     },
     async logout() {
@@ -110,10 +117,6 @@ export const useUserStore: any = defineStore("userData", {
     },
     async sendAvatarUser(file: any) {
       try {
-        if (file.type !== "image/webp" && file.type !== "image/png") {
-          toast("Пожалуйста выберите изоражение формата webp или png");
-          return;
-        }
         const formDataFile = new FormData();
         formDataFile.append("avatar", file);
         const result = await authApi.setPhoto(this.id, formDataFile);
@@ -127,9 +130,6 @@ export const useUserStore: any = defineStore("userData", {
         this.messages = errorStore(error);
         toast(this.messages);
       }
-    },
-    toast(messages: string) {
-      toast(messages);
     },
   },
 });
