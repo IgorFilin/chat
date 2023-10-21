@@ -13,7 +13,11 @@
         type="search"
         v-model="searchedUser"
       />
-      <div class="v-mainPage_userOnline" v-for="user in currentUsers">
+      <div
+        class="v-mainPage_userOnline"
+        v-for="user in currentUsers"
+        :key="user.id"
+      >
         {{ user.name }}
       </div>
     </div>
@@ -28,14 +32,17 @@
     >
       <div
         class="v-mainPage_messageContainer"
-        :class="{ me: isMeActiveClass(userId) }"
+        :class="{ me: isMe(userId) }"
+        :key="message"
         v-for="({ date, userPhoto, message, name, userId }, index) in messages"
       >
         <img :src="userPhoto" class="v-mainPage_messagePhoto" />
         <div class="v-mainPage_messageContentContainer">
           <div class="v-mainPage_message">
-            <div class="v-mainPage_messageName">{{ name }}</div>
-            <MyComponent :key="message" :message="message" />
+            <div class="v-mainPage_messageName" v-if="!isMe(userId)">
+              {{ name }}
+            </div>
+            <MyComponent :message="message" />
           </div>
           <div>{{ date }}</div>
         </div>
@@ -58,10 +65,10 @@
 <script setup lang="ts">
 import { useUserStore } from "@/store/store.ts";
 import router from "@/router/router";
-import { onMounted, onUnmounted, ref, computed } from "vue";
+import { onMounted, onUnmounted, ref, computed, onRenderTriggered } from "vue";
 import MyComponent from "@/components/assetsComponent/Component.vue";
 
-const message = ref("");
+let message = "";
 const messages = ref([]) as any;
 const usersOnline = ref([]) as any;
 const isActiveUserContainer = ref(false);
@@ -73,6 +80,9 @@ if (!store.isAuth) {
   router.push("/login");
 }
 
+onRenderTriggered(({ key, target, type }) =>
+  console.log({ key, target, type })
+);
 // WebScoket function  //////////////////////////////////////////////////////////////
 
 const connection = new WebSocket(`ws://localhost:3000?userID=${store.id}`);
@@ -88,10 +98,10 @@ function sendMessage() {
     connection.send(
       JSON.stringify({
         event: "message",
-        data: { message: message.value, id: store.id },
+        data: { message: message, id: store.id },
       })
     );
-    message.value = "";
+    message = "";
   }
 }
 
@@ -140,7 +150,7 @@ connection.onmessage = function (event) {
 
 //Функции /////////////////////////////////////////////////////////////////////////
 
-function isMeActiveClass(id: string) {
+function isMe(id: string) {
   if (id) {
     return id === store.id;
   }

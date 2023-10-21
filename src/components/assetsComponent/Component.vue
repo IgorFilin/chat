@@ -24,7 +24,6 @@ export default defineComponent({
       tag = "a";
     }
     console.log(message);
-    console.log(videoId);
     const selectedTag = {
       img: {
         src: message,
