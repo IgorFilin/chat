@@ -10,7 +10,13 @@
       @dragleave.prevent="onDragClass = false"
       @drop.prevent="OnDropChatContainer"
     >
-      <Message :key="message" v-for="message in messages" v-bind="message" />
+      <Message
+        v-if="isLoadingMessages"
+        :key="message"
+        v-for="message in messages"
+        v-bind="message"
+      />
+      <Loader v-else loaderFor="message" />
     </div>
     <div class="v-mainPage__chatInputButtonContainer">
       <textarea
@@ -39,12 +45,15 @@ import {
 } from "vue";
 import Message from "@/components/Message.vue";
 import UserOnlineContainer from "@/components/UserOnlineContainer.vue";
+import Loader from "@/components/Loader.vue";
 
 let message = "";
 const messages = ref([]) as any;
 const usersOnline = ref([]) as any;
 const onDragClass = ref(false);
 const store = useUserStore();
+let messagesLength = 0;
+const isLoadingMessages = ref(false) as any;
 
 if (!store.isAuth) {
   router.push("/login");
@@ -79,6 +88,7 @@ function sendMessage() {
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
+  messagesLength = data.lengthMessages;
 
   if (Array.isArray(data.messages)) {
     const messagesData = data.messages.map((message: any) => {
@@ -115,6 +125,12 @@ connection.onmessage = function (event) {
 
   if (data.clients) {
     usersOnline.value = data.clients;
+  }
+  console.log("message", messages.value.length);
+  console.log("messageLength", messagesLength);
+
+  if (messages.value.length === messagesLength) {
+    isLoadingMessages.value = true;
   }
 };
 
