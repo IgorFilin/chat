@@ -102,7 +102,7 @@ function isMe(id: string | undefined) {
   justify-content: flex-end;
   align-self: flex-end;
   color: #333;
-  border-radius: 8px 0 8px 8px;
+  border-radius: 0 8px 8px 8px;
   overflow: visible;
   white-space: pre-wrap;
   transition: 0.3s;

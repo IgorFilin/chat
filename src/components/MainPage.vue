@@ -135,13 +135,13 @@ function OnDropChatContainer(event: any) {
   const file = event.dataTransfer.files[0];
   const reader = new FileReader();
   reader.onload = function (event) {
-    const arrayBuffer = event.target.result;
+    const arrayBuffer = event.target?.result;
     if (connection.readyState === 1) {
       connection.send(
         JSON.stringify({
           event: "message",
           data: {
-            message: Array.from(new Uint8Array(arrayBuffer)),
+            message: Array.from(new Uint8Array(arrayBuffer as ArrayBuffer)),
             id: store.id,
           },
         })
@@ -186,9 +186,6 @@ onUnmounted(() => {
   margin: auto;
 }
 
-.v-mainPage_messageImage {
-  max-width: 400px;
-}
 .v-mainPage__chatContainer {
   display: flex;
   flex-direction: column-reverse;

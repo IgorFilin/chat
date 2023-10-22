@@ -27,7 +27,7 @@ export default defineComponent({
     const selectedTag = {
       img: {
         src: message,
-        class: "v-mainPage_messageImage",
+        class: "v-component_messageImage",
       },
       a: {
         href: message,
@@ -40,6 +40,9 @@ export default defineComponent({
         frameborder: "0",
         allowfullscreen: true,
       },
+      div: {
+        class: "v-component_textMessage",
+      },
     };
 
     const attribute = computed(() => ({
@@ -50,3 +53,11 @@ export default defineComponent({
   },
 });
 </script>
+<style lang="scss">
+.v-component_messageImage {
+  max-width: 100%;
+}
+
+.v-component_textMessage {
+}
+</style>
