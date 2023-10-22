@@ -1,26 +1,6 @@
 <template>
   <div class="v-mainPage">
-    <div
-      class="v-mainPage_usersOnlineContainer"
-      :class="{ active: isActiveUserContainer }"
-    >
-      <div
-        class="v-mainPage_usersOnlineContainerClickElem"
-        @click="onActiveUserContainer"
-      />
-      <input
-        class="v-mainPage_usersOnlineSearch"
-        type="search"
-        v-model="searchedUser"
-      />
-      <div
-        class="v-mainPage_userOnline"
-        v-for="user in currentUsers"
-        :key="user.id"
-      >
-        {{ user.name }}
-      </div>
-    </div>
+    <UserOnlineContainer :usersOnline="usersOnline" />
     <div
       class="v-mainPage__chatContainer"
       :class="{ drag: onDragClass }"
@@ -30,23 +10,7 @@
       @dragleave.prevent="onDragClass = false"
       @drop.prevent="OnDropChatContainer"
     >
-      <div
-        class="v-mainPage_messageContainer"
-        :class="{ me: isMe(userId) }"
-        :key="message"
-        v-for="({ date, userPhoto, message, name, userId }, index) in messages"
-      >
-        <img :src="userPhoto" class="v-mainPage_messagePhoto" />
-        <div class="v-mainPage_messageContentContainer">
-          <div class="v-mainPage_message">
-            <div class="v-mainPage_messageName" v-if="!isMe(userId)">
-              {{ name }}
-            </div>
-            <MyComponent :message="message" />
-          </div>
-          <div>{{ date }}</div>
-        </div>
-      </div>
+      <Message :key="message" v-for="message in messages" v-bind="message" />
     </div>
     <div class="v-mainPage__chatInputButtonContainer">
       <textarea
@@ -65,14 +29,20 @@
 <script setup lang="ts">
 import { useUserStore } from "@/store/store.ts";
 import router from "@/router/router";
-import { onMounted, onUnmounted, ref, computed, onRenderTriggered } from "vue";
-import MyComponent from "@/components/assetsComponent/Component.vue";
+import {
+  onMounted,
+  onUnmounted,
+  ref,
+  computed,
+  onRenderTriggered,
+  onUpdated,
+} from "vue";
+import Message from "@/components/Message.vue";
+import UserOnlineContainer from "@/components/UserOnlineContainer.vue";
 
 let message = "";
 const messages = ref([]) as any;
 const usersOnline = ref([]) as any;
-const isActiveUserContainer = ref(false);
-const searchedUser = ref("");
 const onDragClass = ref(false);
 const store = useUserStore();
 
@@ -83,6 +53,8 @@ if (!store.isAuth) {
 onRenderTriggered(({ key, target, type }) =>
   console.log({ key, target, type })
 );
+
+onUpdated(() => console.log(messages.value));
 // WebScoket function  //////////////////////////////////////////////////////////////
 
 const connection = new WebSocket(`ws://localhost:3000?userID=${store.id}`);
@@ -150,16 +122,6 @@ connection.onmessage = function (event) {
 
 //Функции /////////////////////////////////////////////////////////////////////////
 
-function isMe(id: string) {
-  if (id) {
-    return id === store.id;
-  }
-}
-
-function onActiveUserContainer() {
-  isActiveUserContainer.value = !isActiveUserContainer.value;
-}
-
 function OnDragChatContainer(event: any) {
   event.preventDefault();
   if (!onDragClass.value) {
@@ -199,16 +161,6 @@ function onScroll(event: any) {
 
 // Computed ////////////////////////////////////////////////////////////////////////////////
 
-const currentUsers = computed(() => {
-  const seachValue = searchedUser.value.toLowerCase().trim();
-  if (!seachValue) {
-    return usersOnline.value;
-  }
-  return usersOnline.value.filter((user: any) => {
-    return user.name.toLowerCase().trim().includes(seachValue);
-  });
-});
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 // Жизненный цикл //////////////////////////////////////////////////////////////////////////
@@ -232,41 +184,6 @@ onUnmounted(() => {
   width: 100%;
   max-width: 1980px;
   margin: auto;
-}
-
-.v-mainPage_messagePhoto {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: brown;
-}
-
-.v-mainPage_messageContainer {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  align-self: flex-end;
-
-  &.me {
-    align-self: flex-start;
-
-    .v-mainPage_message {
-      display: flex;
-      flex-direction: column;
-      align-self: flex-start;
-      background: #a3b8bc;
-      border-radius: 0 8px 8px 8px;
-
-      // &:after {
-      //   content: "";
-      //   position: absolute;
-      //   left: 0px;
-      //   top: 15px;
-      //   border: 7px solid transparent;
-      //   border-right: 7px solid green;
-      // }
-    }
-  }
 }
 
 .v-mainPage_messageImage {
@@ -301,87 +218,11 @@ onUnmounted(() => {
   }
 }
 
-.v-mainPage_usersOnlineContainerClickElem {
-  content: "";
-  display: block;
-  height: 30px;
-  width: 30px;
-  border: inherit;
-  position: absolute;
-  clip-path: polygon(0% 0%, 100% 100%, 0% 100%);
-  transform: rotate(225deg);
-  z-index: 99;
-  background-color: #202020;
-  right: -14px;
-  top: 50%;
-  border-radius: 0 0 0 0.25em;
-  transition: 0.5s;
-  cursor: pointer;
-}
-.v-mainPage_usersOnlineContainer {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 20px 20px 50px;
-  box-sizing: border-box;
-  width: 300px;
-  height: 80%;
-  max-height: 700px;
-  background-color: #1e1c1c;
-  border-radius: 30px 0 20px 0;
-  box-shadow: 0px 0px 80px -28px rgba(0, 0, 0, 0.16);
-  transition: 0.5s;
-  left: -300px;
-  gap: 15px;
-  z-index: 9;
-
-  &.active {
-    left: 2px;
-  }
-}
-
-.v-mainPage_usersOnlineSearch {
-  background-color: #ededed;
-  border: 1px solid #141416;
-  display: inline-block;
-  vertical-align: middle;
-  resize: none;
-  padding: 5px;
-  margin-bottom: 10px;
-
-  &:focus-visible {
-    outline: none;
-  }
-}
-
-.v-mainPage_userOnline {
-  font-size: 17px;
-  line-height: 20px;
-  color: white;
-
-  &:hover {
-    cursor: pointer;
-  }
-}
-
-.v-mainPage_messageName {
-  position: relative;
-  font-size: 12px;
-  line-height: 15px;
-  bottom: 6px;
-}
-
 .v-mainPage__chatInputButtonContainer {
   display: flex;
   width: 75%;
 }
 
-.v-mainPage_messageContentContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  align-items: center;
-}
 .v-mainPage_chatButton {
   display: flex;
   padding: 5px 10px;
@@ -396,26 +237,6 @@ onUnmounted(() => {
     color: #000;
     background-color: #fff;
   }
-}
-
-.v-mainPage_message {
-  word-break: break-all;
-  display: flex;
-  padding: 14px 16px;
-  word-wrap: break-word;
-  flex-direction: column;
-  background: #f0f0f0;
-  font-size: 14px;
-  line-height: 20px;
-  justify-content: flex-end;
-  align-self: flex-end;
-  color: #333;
-  border-radius: 8px 0 8px 8px;
-  overflow: visible;
-  white-space: pre-wrap;
-  transition: 0.3s;
-  scroll-margin-top: 16px;
-  scroll-margin-bottom: 21px;
 }
 
 .v-mainPage__chatInput {
