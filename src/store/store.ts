@@ -131,5 +131,8 @@ export const useUserStore: any = defineStore("userData", {
         toast(this.messages);
       }
     },
+    toast(message: string) {
+      toast(message);
+    },
   },
 });

@@ -51,9 +51,10 @@ let message = "";
 const messages = ref([]) as any;
 const usersOnline = ref([]) as any;
 const onDragClass = ref(false);
-const store = useUserStore();
 let messagesLength = 0;
 const isLoadingMessages = ref(false) as any;
+
+const store = useUserStore();
 
 if (!store.isAuth) {
   router.push("/login");
@@ -63,7 +64,6 @@ onRenderTriggered(({ key, target, type }) =>
   console.log({ key, target, type })
 );
 
-onUpdated(() => console.log(messages.value));
 // WebScoket function  //////////////////////////////////////////////////////////////
 
 const connection = new WebSocket(`ws://localhost:3000?userID=${store.id}`);
@@ -88,6 +88,7 @@ function sendMessage() {
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
+
   messagesLength = data.lengthMessages;
 
   if (Array.isArray(data.messages)) {
@@ -150,6 +151,12 @@ function OnDropChatContainer(event: any) {
   onDragClass.value = false;
   const file = event.dataTransfer.files[0];
   const reader = new FileReader();
+
+  if (file.size > 300 * 1024) {
+    store.toast("Изображение слишком большое. Максимальный размер - 300 КБ.");
+    return;
+  }
+
   reader.onload = function (event) {
     const arrayBuffer = event.target?.result;
     if (connection.readyState === 1) {
