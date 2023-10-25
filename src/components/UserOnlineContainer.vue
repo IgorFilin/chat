@@ -4,7 +4,8 @@
     <input class="v-usersOnline__search" type="search" v-model="searchedUser" />
     <div
       class="v-usersOnline__user"
-      v-for="user in currentUsers"
+      :class="{ online: user.online }"
+      v-for="user in filteredActiveOrNotUsers"
       :key="user.id"
     >
       {{ user.name }}
@@ -13,15 +14,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import { useUserStore } from "@/store/user_store.ts";
+
+const user_store = useUserStore();
 
 const searchedUser = ref("");
 const isActiveUserContainer = ref(false);
+const users = ref([]) as any;
 
 const props = defineProps({
   usersOnline: {
     type: Array<{ name: string; id: string }>,
     desc: "Массив онлайн пользователей",
+    default() {
+      return [];
+    },
   },
 });
 
@@ -35,6 +43,40 @@ const currentUsers = computed(() => {
     return props.usersOnline;
   }
   return props.usersOnline?.filter((user: any) =>
+    user.name.toLowerCase().trim().includes(seachValue)
+  );
+});
+
+onMounted(() => {
+  user_store.getAllUsers();
+});
+
+watch([() => props.usersOnline, () => user_store.users], () => {
+  if (props.usersOnline) {
+    users.value = user_store.users
+      .map((user: any) => {
+        if (
+          props.usersOnline.some((userOnline: any) => userOnline.id === user.id)
+        ) {
+          return {
+            online: true,
+            name: user.name,
+            id: user.id,
+          };
+        } else {
+          return user;
+        }
+      })
+      .sort((a: any, b: any) => (a.online ? -1 : b.online ? -1 : 1));
+  }
+});
+
+const filteredActiveOrNotUsers = computed(() => {
+  const seachValue = searchedUser.value.toLowerCase().trim();
+  if (!seachValue) {
+    return users.value;
+  }
+  return users.value.filter((user: any) =>
     user.name.toLowerCase().trim().includes(seachValue)
   );
 });
@@ -79,7 +121,13 @@ const currentUsers = computed(() => {
   .v-usersOnline__user {
     font-size: 17px;
     line-height: 20px;
-    color: white;
+    color: rgb(222, 212, 212);
+    opacity: 0.6;
+
+    &.online {
+      color: rgb(25, 139, 25);
+      opacity: 1;
+    }
 
     &:hover {
       cursor: pointer;

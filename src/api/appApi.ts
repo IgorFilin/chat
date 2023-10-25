@@ -3,6 +3,7 @@ import {
   LoginUserType,
   RegisterUserType,
   ResponseConfirmRegType,
+  ResponseGetAllUsersType,
   ResponseLoginType,
   ResponseLogoutType,
   ResponseRegisterUserType,
@@ -47,7 +48,7 @@ export const authApi = {
 };
 
 export const userApi = {
-  getPhoto() {
-    return instance.get("users_list");
+  getAllUsers() {
+    return instance.get<Array<ResponseGetAllUsersType>>("user/users_list");
   },
 };

@@ -35,3 +35,8 @@ export interface ResponseRegisterUserType {
   isRegConfirm: boolean;
   message: string;
 }
+
+export interface ResponseGetAllUsersType {
+  id: string;
+  name: string;
+}
