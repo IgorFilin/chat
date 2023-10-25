@@ -50,9 +50,9 @@
 
 <script setup lang="ts">
 import router from "@/router/router";
-import { useUserStore } from "@/store/store";
+import { useAuthStore } from "@/store/store";
 
-const store = useUserStore();
+const store = useAuthStore();
 
 function goTo(route: string) {
   router.push(route);

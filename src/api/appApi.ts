@@ -45,3 +45,9 @@ export const authApi = {
     });
   },
 };
+
+export const userApi = {
+  getPhoto() {
+    return instance.get("users_list");
+  },
+};

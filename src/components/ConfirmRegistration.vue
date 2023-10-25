@@ -14,12 +14,12 @@
 
 <script setup lang="ts">
 import router from "@/router/router";
-import { useUserStore } from "@/store/store";
+import { useAuthStore } from "@/store/store";
 import { ref, watch } from "vue";
 
 const keyAccept = ref("");
 
-const store = useUserStore();
+const store = useAuthStore();
 
 function sendKey() {
   store.confirmRegistration(keyAccept.value);

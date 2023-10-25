@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "@/store/store.ts";
+import { useAuthStore } from "@/store/store.ts";
 import router from "@/router/router";
 import {
   onMounted,
@@ -54,15 +54,15 @@ const onDragClass = ref(false);
 let messagesLength = 0;
 const isLoadingMessages = ref(false) as any;
 
-const store = useUserStore();
+const store = useAuthStore();
 
 if (!store.isAuth) {
   router.push("/login");
 }
 
-onRenderTriggered(({ key, target, type }) =>
-  console.log({ key, target, type })
-);
+// onRenderTriggered(({ key, target, type }) =>
+//   console.log({ key, target, type })
+// ); // Тест производительности
 
 // WebScoket function  //////////////////////////////////////////////////////////////
 
@@ -137,7 +137,7 @@ connection.onmessage = function (event) {
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-//Функции /////////////////////////////////////////////////////////////////////////
+// Функции /////////////////////////////////////////////////////////////////////////
 
 function OnDragChatContainer(event: any) {
   event.preventDefault();
@@ -194,7 +194,6 @@ onMounted(() => {
 onUnmounted(() => {
   connection.close();
 });
-///////////////////////////////////////////////////////////////////////////////////////////
 </script>
 
 <style scoped lang="scss">

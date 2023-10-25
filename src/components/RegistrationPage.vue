@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "@/store/store.ts";
+import { useAuthStore } from "@/store/store.ts";
 import { onUpdated, ref, watch } from "vue";
 import { RegisterUserType } from "@/api/typesApi";
 import router from "@/router/router";
@@ -37,7 +37,7 @@ const requestDataUser = ref<RegisterUserType | {}>({
   password: "",
 });
 
-const store = useUserStore();
+const store = useAuthStore();
 
 function submitForm(e: Event) {
   e.preventDefault();

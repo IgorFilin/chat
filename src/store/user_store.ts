@@ -18,7 +18,7 @@ interface UserType {
 
 const toast = useToast();
 
-export const useAuthStore: any = defineStore("auth_store", {
+export const useUserStore: any = defineStore("user_store", {
   state: () => {
     return {
       name: "",

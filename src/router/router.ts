@@ -3,7 +3,7 @@ import RegistrationPage from "../components/RegistrationPage.vue";
 import LoginPage from "@/components/LoginPage.vue";
 import MainPage from "@/components/MainPage.vue";
 import ConfirmRegistration from "@/components/ConfirmRegistration.vue";
-import { useUserStore } from "@/store/store.ts";
+import { useAuthStore } from "@/store/store.ts";
 
 const routes = [
   { path: "/registration", component: RegistrationPage },
@@ -18,7 +18,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const store = useUserStore();
+  const store = useAuthStore();
 
   if (!store.isAuth && to.path === "/main") {
     next({ path: "/login" });

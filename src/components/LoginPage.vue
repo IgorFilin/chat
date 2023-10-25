@@ -21,14 +21,14 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { useUserStore } from "@/store/store.ts";
+import { useAuthStore } from "@/store/store.ts";
 import { LoginUserType } from "@/api/typesApi";
 import router from "@/router/router";
 
 let email = ref("");
 let password = ref("");
 
-const store = useUserStore();
+const store = useAuthStore();
 
 async function submitForm() {
   await store.loginAction({

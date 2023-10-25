@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "@/store/store.ts";
+import { useAuthStore } from "@/store/store.ts";
 import MyComponent from "@/components/assetsComponent/Component.vue";
 
 const props = defineProps({
@@ -40,7 +40,7 @@ const props = defineProps({
   },
 });
 
-const store = useUserStore();
+const store = useAuthStore();
 function isMe(id: string | undefined) {
   if (id) {
     return id === store.id;
