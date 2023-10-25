@@ -1,7 +1,6 @@
 import axios, { AxiosError } from "axios";
 
 export function errorStore(error: any) {
-  console.log(error);
   if (axios.isAxiosError(error) && error.response) {
     const err = error as AxiosError<{ message: string }>;
     if (err.response) {

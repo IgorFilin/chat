@@ -30,7 +30,6 @@ function onActiveUserContainer() {
 }
 
 const currentUsers = computed(() => {
-  console.log("computed");
   const seachValue = searchedUser.value.toLowerCase().trim();
   if (!seachValue) {
     return props.usersOnline;

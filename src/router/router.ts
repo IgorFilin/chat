@@ -3,7 +3,7 @@ import RegistrationPage from "../components/RegistrationPage.vue";
 import LoginPage from "@/components/LoginPage.vue";
 import MainPage from "@/components/MainPage.vue";
 import ConfirmRegistration from "@/components/ConfirmRegistration.vue";
-import { useAuthStore } from "@/store/store.ts";
+import { useAuthStore } from "@/store/auth_store";
 
 const routes = [
   { path: "/registration", component: RegistrationPage },

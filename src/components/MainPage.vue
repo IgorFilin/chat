@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from "@/store/store.ts";
+import { useAuthStore } from "@/store/auth_store.ts";
 import router from "@/router/router";
 import {
   onMounted,
@@ -127,8 +127,6 @@ connection.onmessage = function (event) {
   if (data.clients) {
     usersOnline.value = data.clients;
   }
-  console.log("message", messages.value.length);
-  console.log("messageLength", messagesLength);
 
   if (messages.value.length === messagesLength) {
     isLoadingMessages.value = true;

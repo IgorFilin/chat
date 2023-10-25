@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from "@/store/store.ts";
+import { useAuthStore } from "@/store/auth_store.ts";
 import MyComponent from "@/components/assetsComponent/Component.vue";
 
 const props = defineProps({

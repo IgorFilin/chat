@@ -23,7 +23,7 @@ export default defineComponent({
     } else if (patternLink.test(message)) {
       tag = "a";
     }
-    console.log(message);
+
     const selectedTag = {
       img: {
         src: message,

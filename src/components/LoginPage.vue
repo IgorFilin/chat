@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { useAuthStore } from "@/store/store.ts";
+import { useAuthStore } from "@/store/auth_store.ts";
 import { LoginUserType } from "@/api/typesApi";
 import router from "@/router/router";
 

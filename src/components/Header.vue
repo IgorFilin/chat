@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import router from "@/router/router";
-import { useAuthStore } from "@/store/store";
+import { useAuthStore } from "@/store/auth_store";
 
 const store = useAuthStore();
 
