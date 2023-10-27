@@ -2,13 +2,15 @@
   <div class="v-usersOnline" :class="{ active: isActiveUserContainer }">
     <div class="v-usersOnline__clickElem" @click="onActiveUserContainer" />
     <input class="v-usersOnline__search" type="search" v-model="searchedUser" />
-    <div
-      class="v-usersOnline__user"
-      :class="{ online: user.online }"
-      v-for="user in filteredActiveOrNotUsers"
-      :key="user.id"
-    >
-      {{ user.name }}
+    <div class="v-usersOnline__usersContainer">
+      <div
+        class="v-usersOnline__user"
+        :class="{ online: user.online }"
+        v-for="user in filteredActiveOrNotUsers"
+        :key="user.id"
+      >
+        {{ user.name }}
+      </div>
     </div>
   </div>
 </template>
@@ -85,8 +87,6 @@ const filteredActiveOrNotUsers = computed(() => {
 <style lang="scss">
 .v-usersOnline {
   position: absolute;
-  display: flex;
-  flex-direction: column;
   padding: 20px 20px 20px 50px;
   box-sizing: border-box;
   width: 300px;
@@ -97,7 +97,7 @@ const filteredActiveOrNotUsers = computed(() => {
   box-shadow: 0px 0px 80px -28px rgba(0, 0, 0, 0.16);
   transition: 0.5s;
   left: -300px;
-  gap: 15px;
+
   z-index: 9;
 
   &.active {
@@ -123,14 +123,25 @@ const filteredActiveOrNotUsers = computed(() => {
     line-height: 20px;
     color: rgb(222, 212, 212);
     opacity: 0.6;
+    cursor: pointer;
 
     &.online {
       color: rgb(25, 139, 25);
       opacity: 1;
     }
+  }
 
-    &:hover {
-      cursor: pointer;
+  .v-usersOnline__usersContainer {
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 90%;
+
+    &::-webkit-scrollbar {
+      display: none;
+      -ms-overflow-style: none; /* IE и Edge */
+      scrollbar-width: none;
     }
   }
 
