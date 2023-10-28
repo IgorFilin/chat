@@ -184,7 +184,14 @@ function onScroll(event: any) {
 }
 
 function openRoomHandler(id: string) {
-  console.log(id);
+  if (connection.readyState === 1) {
+    connection.send(
+      JSON.stringify({
+        event: "open_room",
+        data: { myId: store.id, userId: id },
+      })
+    );
+  }
 }
 // Computed ////////////////////////////////////////////////////////////////////////////////
 
