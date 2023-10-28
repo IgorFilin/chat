@@ -27,23 +27,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, Ref } from "vue";
 import { useUserStore } from "@/store/user_store.ts";
+
+interface UserType {
+  id: string;
+  name: string;
+}
+
+interface UserTypeInUsersArrayType extends UserType {
+  online: string;
+}
 
 const user_store = useUserStore();
 
-const searchedUser = ref("");
-const isActiveUserContainer = ref(false);
-const users = ref([]) as any;
-const showPopup = ref(false);
+const searchedUser = ref("") as Ref<string>;
+const isActiveUserContainer = ref(false) as Ref<boolean>;
+const users = ref([]) as Ref<Array<UserTypeInUsersArrayType>>;
+const showPopup = ref(false) as Ref<boolean>;
 const clikedUser = ref({
   name: "",
   id: "",
-});
+}) as Ref<UserType>;
 
 const props = defineProps({
   usersOnline: {
-    type: Array<{ name: string; id: string }>,
+    type: Array<UserTypeInUsersArrayType>,
     desc: "Массив онлайн пользователей",
     default() {
       return [];
@@ -55,7 +64,7 @@ function onActiveUserContainer() {
   isActiveUserContainer.value = !isActiveUserContainer.value;
 }
 
-function clickedUserHandler(event: any, user: any) {
+function clickedUserHandler(event: Event, user: UserType) {
   event.stopPropagation();
   clikedUser.value = user;
   showPopup.value = true;
@@ -68,9 +77,11 @@ onMounted(() => {
 watch([() => props.usersOnline, () => user_store.users], () => {
   if (props.usersOnline) {
     users.value = user_store.users
-      .map((user: any) => {
+      .map((user: UserType) => {
         if (
-          props.usersOnline.some((userOnline: any) => userOnline.id === user.id)
+          props.usersOnline.some(
+            (userOnline: UserTypeInUsersArrayType) => userOnline.id === user.id
+          )
         ) {
           return {
             online: true,
@@ -90,7 +101,7 @@ const filteredActiveOrNotUsers = computed(() => {
   if (!seachValue) {
     return users.value;
   }
-  return users.value.filter((user: any) =>
+  return users.value.filter((user: UserType) =>
     user.name.toLowerCase().trim().includes(seachValue)
   );
 });
