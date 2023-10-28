@@ -16,10 +16,19 @@
       >
         {{ user.name }}
         <div
-          v-if="showPopup && clikedUser.id === user.id"
+          v-if="
+            showPopup &&
+            clikedUser.id === user.id &&
+            clikedUser.id !== auth_store.id
+          "
           class="v-usersOnline__popup"
         >
-          <div class="v-usersOnline__popupText">шёпот</div>
+          <div
+            class="v-usersOnline__popupText"
+            @click="onPrivateRoomHandler($event, user.id)"
+          >
+            В личку
+          </div>
         </div>
       </div>
     </div>
@@ -29,6 +38,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, Ref } from "vue";
 import { useUserStore } from "@/store/user_store.ts";
+import { useAuthStore } from "@/store/auth_store.ts";
 
 interface UserType {
   id: string;
@@ -39,7 +49,10 @@ interface UserTypeInUsersArrayType extends UserType {
   online: string;
 }
 
+const emit = defineEmits();
+
 const user_store = useUserStore();
+const auth_store = useAuthStore();
 
 const searchedUser = ref("") as Ref<string>;
 const isActiveUserContainer = ref(false) as Ref<boolean>;
@@ -64,10 +77,16 @@ function onActiveUserContainer() {
   isActiveUserContainer.value = !isActiveUserContainer.value;
 }
 
-function clickedUserHandler(event: Event, user: UserType) {
+function clickedUserHandler(event: MouseEvent, user: UserType) {
   event.stopPropagation();
   clikedUser.value = user;
   showPopup.value = true;
+}
+
+function onPrivateRoomHandler(event: MouseEvent, id: string) {
+  event.stopPropagation();
+  showPopup.value = false;
+  emit("openRoom", id);
 }
 
 onMounted(() => {
@@ -198,8 +217,8 @@ const filteredActiveOrNotUsers = computed(() => {
     padding: 10px 12px;
     opacity: 1;
     color: #555;
-    top: -8px;
-    right: -80px;
+    top: -10px;
+    right: -90px;
   }
 
   .v-usersOnline__popupText {

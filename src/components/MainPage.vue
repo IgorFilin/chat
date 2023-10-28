@@ -1,6 +1,9 @@
 <template>
   <div class="v-mainPage">
-    <UserOnlineContainer :usersOnline="usersOnline" />
+    <UserOnlineContainer
+      @openRoom="openRoomHandler"
+      :usersOnline="usersOnline"
+    />
     <div
       class="v-mainPage__chatContainer"
       :class="{ drag: onDragClass }"
@@ -180,6 +183,9 @@ function onScroll(event: any) {
   }
 }
 
+function openRoomHandler(id: string) {
+  console.log(id);
+}
 // Computed ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////

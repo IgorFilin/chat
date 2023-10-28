@@ -1,8 +1,6 @@
 import { defineStore } from "pinia";
 import { userApi } from "@/api/appApi";
-import { LoginUserType } from "@/api/typesApi";
 import { useToast } from "vue-toastification";
-import { dataRegisterUser } from "@/api/typesApi";
 import { errorStore } from "@/utils/storeError";
 
 interface UserStoreType {
