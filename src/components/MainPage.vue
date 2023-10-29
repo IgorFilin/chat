@@ -96,26 +96,34 @@ connection.onmessage = function (event) {
     messagesLength = data.lengthMessages;
   }
 
-  if (data.roomId) {
-    privateRoom.value = data.roomId;
+  if (
+    data.messages &&
+    data.messages.roomId &&
+    data.roomId !== privateRoom.value
+  ) {
+    messages.value = [];
   }
 
-  if (Array.isArray(data.messages)) {
-    const messagesData = data.messages.map((message: any) => {
-      const base64Image = message.userPhoto;
-      const binaryData = Uint8Array.from(atob(base64Image), (c) =>
-        c.charCodeAt(0)
-      );
-      const blobImage = new Blob([binaryData]);
-      return {
-        name: message.name,
-        userId: message.userId,
-        message: message.message,
-        userPhoto: URL.createObjectURL(blobImage),
-      };
-    });
-    messages.value = messagesData;
+  if (data.messages && data.messages.roomId) {
+    privateRoom.value = data.messages.roomId;
   }
+
+  // if (Array.isArray(data.messages)) {
+  //   const messagesData = data.messages.map((message: any) => {
+  //     const base64Image = message.userPhoto;
+  //     const binaryData = Uint8Array.from(atob(base64Image), (c) =>
+  //       c.charCodeAt(0)
+  //     );
+  //     const blobImage = new Blob([binaryData]);
+  //     return {
+  //       name: message.name,
+  //       userId: message.userId,
+  //       message: message.message,
+  //       userPhoto: URL.createObjectURL(blobImage),
+  //     };
+  //   });
+  //   messages.value = messagesData;
+  // }
 
   if (data.messages?.message && Array.isArray(data.messages.message)) {
     const bufferData = new Uint8Array(data.messages.message);
@@ -124,14 +132,17 @@ connection.onmessage = function (event) {
   }
 
   if (typeof data.messages?.message === "string") {
-    console.log(data.messages);
     const base64Image = data.messages.userPhoto;
     const binaryData = Uint8Array.from(atob(base64Image), (c) =>
       c.charCodeAt(0)
     );
     const blobImage = new Blob([binaryData]);
     data.messages.userPhoto = URL.createObjectURL(blobImage);
-    messages.value.unshift(data.messages);
+    console.log(privateRoom.value);
+    console.log(data.messages.roomId);
+    if (data.messages.roomId === privateRoom.value) {
+      messages.value.unshift(data.messages);
+    }
   }
 
   if (data.clients) {

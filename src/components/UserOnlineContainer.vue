@@ -87,6 +87,7 @@ function onPrivateRoomHandler(event: MouseEvent, id: string) {
   event.stopPropagation();
   showPopup.value = false;
   emit("openRoom", id);
+  isActiveUserContainer.value = false;
 }
 
 onMounted(() => {
