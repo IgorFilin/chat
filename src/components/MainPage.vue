@@ -21,23 +21,15 @@
       />
       <Loader v-else loaderFor="message" />
     </div>
-    <div class="v-mainPage__chatInputButtonContainer">
-      <textarea
-        @keyup.enter="sendMessage"
-        v-model="message"
-        class="v-mainPage__chatInput"
-        type="text"
-      />
-      <button class="v-mainPage_chatButton" @click="sendMessage">
-        Отправить сообщение
-      </button>
-    </div>
+    <InputSendButton @sendMessage="sendMessage" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useAuthStore } from "@/store/auth_store.ts";
+import InputSendButton from "@/components/InputSendButton.vue";
 import router from "@/router/router";
+
 import {
   onMounted,
   onUnmounted,
@@ -50,11 +42,12 @@ import Message from "@/components/Message.vue";
 import UserOnlineContainer from "@/components/UserOnlineContainer.vue";
 import Loader from "@/components/Loader.vue";
 
-let message = "";
+let messagesLength = 0;
+
+const privateRoom = ref("");
 const messages = ref([]) as any;
 const usersOnline = ref([]) as any;
 const onDragClass = ref(false);
-let messagesLength = 0;
 const isLoadingMessages = ref(false) as any;
 
 const store = useAuthStore();
@@ -77,22 +70,35 @@ connection.onclose = function (event) {
   console.log(event);
 };
 
-function sendMessage() {
+function sendMessage(message: string) {
+  let event = "";
+  let roomId = "";
+  if (privateRoom.value) {
+    event = "private_message";
+    roomId = privateRoom.value;
+  } else {
+    event = "message";
+  }
   if (connection.readyState === 1) {
     connection.send(
       JSON.stringify({
-        event: "message",
-        data: { message: message, id: store.id },
+        event,
+        data: { message: message, id: store.id, roomId },
       })
     );
-    message = "";
   }
 }
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
 
-  messagesLength = data.lengthMessages;
+  if (data.lengthMessages) {
+    messagesLength = data.lengthMessages;
+  }
+
+  if (data.roomId) {
+    privateRoom.value = data.roomId;
+  }
 
   if (Array.isArray(data.messages)) {
     const messagesData = data.messages.map((message: any) => {
@@ -118,6 +124,7 @@ connection.onmessage = function (event) {
   }
 
   if (typeof data.messages?.message === "string") {
+    console.log(data.messages);
     const base64Image = data.messages.userPhoto;
     const binaryData = Uint8Array.from(atob(base64Image), (c) =>
       c.charCodeAt(0)
@@ -245,42 +252,6 @@ onUnmounted(() => {
 
   &.drag {
     opacity: 0.4;
-  }
-}
-
-.v-mainPage__chatInputButtonContainer {
-  display: flex;
-  width: 75%;
-}
-
-.v-mainPage_chatButton {
-  display: flex;
-  padding: 5px 10px;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  background-color: #141416;
-  transition: 0.5s;
-
-  &:hover {
-    border: 2px solid #000;
-    color: #000;
-    background-color: #fff;
-  }
-}
-
-.v-mainPage__chatInput {
-  width: 100%;
-  background-color: #ededed;
-  padding-left: 10px;
-  border: 1px solid #141416;
-  display: inline-block;
-  vertical-align: middle;
-  resize: none;
-  padding: 10px;
-
-  &:focus-visible {
-    outline: none;
   }
 }
 </style>
