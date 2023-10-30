@@ -4,6 +4,10 @@
       @openRoom="openRoomHandler"
       :usersOnline="usersOnline"
     />
+    <div v-if="privateRoom">
+      <button @click="goToPublickChat">В общий чат</button>
+      <div>{{ userToAddPrivate }}</div>
+    </div>
     <div
       class="v-mainPage__chatContainer"
       :class="{ drag: onDragClass }"
@@ -45,6 +49,7 @@ import Loader from "@/components/Loader.vue";
 let messagesLength = 0;
 
 const privateRoom = ref("");
+let userToAddPrivate = ref("");
 const messages = ref([]) as any;
 const usersOnline = ref([]) as any;
 const onDragClass = ref(false);
@@ -64,7 +69,7 @@ if (!store.isAuth) {
 
 const connection = new WebSocket(`ws://localhost:3000?userID=${store.id}`);
 
-connection.onopen = function (event) {};
+connection.onopen = function () {};
 
 connection.onclose = function (event) {
   console.log(event);
@@ -94,6 +99,9 @@ connection.onmessage = function (event) {
 
   if (data.lengthMessages) {
     messagesLength = data.lengthMessages;
+  }
+  if (data.userToAddPrivat) {
+    userToAddPrivate.value = data.userToAddPrivat;
   }
 
   if (
@@ -138,8 +146,6 @@ connection.onmessage = function (event) {
     );
     const blobImage = new Blob([binaryData]);
     data.messages.userPhoto = URL.createObjectURL(blobImage);
-    console.log(privateRoom.value);
-    console.log(data.messages.roomId);
     if (data.messages.roomId === privateRoom.value) {
       messages.value.unshift(data.messages);
     }
@@ -162,6 +168,18 @@ function OnDragChatContainer(event: any) {
   event.preventDefault();
   if (!onDragClass.value) {
     onDragClass.value = true;
+  }
+}
+
+function goToPublickChat() {
+  privateRoom.value = "";
+  if (connection.readyState === 1) {
+    connection.send(
+      JSON.stringify({
+        event: "all_messages_public",
+        data: { id: store.id, getMessage: true },
+      })
+    );
   }
 }
 
