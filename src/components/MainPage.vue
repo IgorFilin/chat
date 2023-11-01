@@ -5,7 +5,7 @@
       :usersOnline="usersOnline"
     />
     <div v-if="privateRoom">
-      <button @click="goToPublickChat">В общий чат</button>
+      <button @click="goToPublicChat">В общий чат</button>
       <div>{{ userToAddPrivate }}</div>
     </div>
     <div
@@ -49,7 +49,7 @@ import Loader from "@/components/Loader.vue";
 let messagesLength = 0;
 
 const privateRoom = ref("");
-let userToAddPrivate = ref("");
+const userToAddPrivate = ref("");
 const messages = ref([]) as any;
 const usersOnline = ref([]) as any;
 const onDragClass = ref(false);
@@ -171,13 +171,14 @@ function OnDragChatContainer(event: any) {
   }
 }
 
-function goToPublickChat() {
+function goToPublicChat() {
   privateRoom.value = "";
+  messages.value = [];
   if (connection.readyState === 1) {
     connection.send(
       JSON.stringify({
         event: "all_messages_public",
-        data: { id: store.id, getMessage: true },
+        data: { id: store.id },
       })
     );
   }
