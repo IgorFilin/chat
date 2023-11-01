@@ -132,7 +132,7 @@ const filteredActiveOrNotUsers = computed(() => {
   position: absolute;
   padding: 20px 0 20px 20px;
   width: 300px;
-  height: 80%;
+  height: 70%;
   max-height: 700px;
   background-color: #1e1c1c;
   border-radius: 30px 0 20px 0;

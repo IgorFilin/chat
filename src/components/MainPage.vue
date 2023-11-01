@@ -4,8 +4,11 @@
       @openRoom="openRoomHandler"
       :usersOnline="usersOnline"
     />
-    <div v-if="privateRoom">
-      <button @click="goToPublicChat">В общий чат</button>
+    <div v-if="privateRoom" class="v-mainPage__backAllChatContainer">
+      <button @click="goToPublicChat" class="v-mainPage__buttonBackAllChat">
+        <Icon id="arrow_back" color="white" />
+        В общий чат
+      </button>
       <div>{{ userToAddPrivate }}</div>
     </div>
     <div
@@ -45,6 +48,7 @@ import {
 import Message from "@/components/Message.vue";
 import UserOnlineContainer from "@/components/UserOnlineContainer.vue";
 import Loader from "@/components/Loader.vue";
+import Icon from "@/components/Icon.vue";
 
 let messagesLength = 0;
 
@@ -283,5 +287,35 @@ onUnmounted(() => {
   &.drag {
     opacity: 0.4;
   }
+}
+
+.v-mainPage__buttonBackAllChat {
+  display: flex;
+  cursor: pointer;
+  background-color: #141416;
+  transition: 0.5s;
+  color: white;
+  padding: 5px 10px;
+  margin: 0;
+  gap: 5px;
+
+  &:hover {
+    transition: 0.5s;
+    border: 2px solid #000;
+    color: #000;
+    background-color: #fff;
+
+    .v-icon {
+      color: #000;
+    }
+  }
+}
+
+.v-mainPage__backAllChatContainer {
+  display: flex;
+  align-items: center;
+  width: 80%;
+  margin: 10px 0;
+  gap: 10px;
 }
 </style>
