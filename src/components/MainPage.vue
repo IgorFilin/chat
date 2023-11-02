@@ -9,7 +9,7 @@
         <Icon id="arrow_back" color="white" />
         В общий чат
       </button>
-      <div>{{ userToAddPrivate }}</div>
+      <div>В диалоге {{ userToAddPrivate }}</div>
     </div>
     <div
       class="v-mainPage__chatContainer"
