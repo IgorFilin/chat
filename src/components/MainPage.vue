@@ -185,10 +185,21 @@ function goToPublicChat() {
   }
 }
 
-function OnDropChatContainer(event: any) {
-  event.preventDefault();
+function OnDropChatContainer(e: any) {
+  e.preventDefault();
+
+  let event = "";
+  let roomId = "";
+
+  if (privateRoom.value) {
+    event = "private_message";
+    roomId = privateRoom.value;
+  } else {
+    event = "message";
+  }
+
   onDragClass.value = false;
-  const file = event.dataTransfer.files[0];
+  const file = e.dataTransfer.files[0];
   const reader = new FileReader();
 
   if (file.size > 300 * 1024) {
@@ -196,15 +207,16 @@ function OnDropChatContainer(event: any) {
     return;
   }
 
-  reader.onload = function (event) {
-    const arrayBuffer = event.target?.result;
+  reader.onload = function (eventReader) {
+    const arrayBuffer = eventReader.target?.result;
     if (connection.readyState === 1) {
       connection.send(
         JSON.stringify({
-          event: "message",
+          event,
           data: {
             message: Array.from(new Uint8Array(arrayBuffer as ArrayBuffer)),
             id: store.id,
+            roomId,
           },
         })
       );
