@@ -100,23 +100,20 @@ function sendMessage(message: string) {
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
-
-  if (data.lengthMessages) {
+  console.log(data);
+  if (data.lengthMessages && data.lengthMessages !== messagesLength) {
     messagesLength = data.lengthMessages;
   }
-  if (data.userToAddPrivat) {
+
+  if (data.userToAddPrivat && data.userToAddPrivat !== userToAddPrivate.value) {
     userToAddPrivate.value = data.userToAddPrivat;
   }
 
   if (
     data.messages &&
     data.messages.roomId &&
-    data.roomId !== privateRoom.value
+    data.messages.roomId !== privateRoom.value
   ) {
-    messages.value = [];
-  }
-
-  if (data.messages && data.messages.roomId) {
     privateRoom.value = data.messages.roomId;
   }
 
@@ -233,6 +230,7 @@ function openRoomHandler(id: string) {
       })
     );
   }
+  messages.value = [];
 }
 // Computed ////////////////////////////////////////////////////////////////////////////////
 

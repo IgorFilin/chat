@@ -94,8 +94,6 @@ onMounted(() => {
   user_store.getAllUsers();
 });
 
-onUpdated(() => console.log(users.value));
-
 watch([() => props.usersOnline, () => user_store.users], () => {
   if (props.usersOnline) {
     users.value = user_store.users
