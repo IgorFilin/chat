@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, Ref } from "vue";
+import { ref, computed, onMounted, watch, Ref, onUpdated } from "vue";
 import { useUserStore } from "@/store/user_store.ts";
 import { useAuthStore } from "@/store/auth_store.ts";
 
@@ -94,6 +94,8 @@ onMounted(() => {
   user_store.getAllUsers();
 });
 
+onUpdated(() => console.log(users.value));
+
 watch([() => props.usersOnline, () => user_store.users], () => {
   if (props.usersOnline) {
     users.value = user_store.users
@@ -112,7 +114,7 @@ watch([() => props.usersOnline, () => user_store.users], () => {
           return user;
         }
       })
-      .sort((a: any, b: any) => (a.online ? -1 : b.online ? -1 : 1));
+      .sort((a: any, b: any) => (a.online && !b.online ? -1 : 1));
   }
 });
 
