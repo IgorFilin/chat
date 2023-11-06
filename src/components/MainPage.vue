@@ -88,11 +88,11 @@ function sendMessage(message: string) {
   } else {
     event = "message";
   }
-  if (connection.readyState === 1) {
+  if (connection.readyState === 1 && message !== "") {
     connection.send(
       JSON.stringify({
         event,
-        data: { message: message, id: store.id, roomId },
+        data: { message: message.trim(), id: store.id, roomId },
       })
     );
   }
