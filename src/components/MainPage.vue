@@ -4,7 +4,10 @@
       @openRoom="openRoomHandler"
       :usersOnline="usersOnline"
     />
-    <div v-if="privateRoom" class="v-mainPage__backAllChatContainer">
+    <div
+      v-if="currentChat === 'private'"
+      class="v-mainPage__backAllChatContainer"
+    >
       <button @click="goToPublicChat" class="v-mainPage__buttonBackAllChat">
         <Icon id="arrow_back" color="white" />
         В общий чат
@@ -44,6 +47,7 @@ import {
   computed,
   onRenderTriggered,
   onUpdated,
+  watch,
 } from "vue";
 import Message from "@/components/Message.vue";
 import UserOnlineContainer from "@/components/UserOnlineContainer.vue";
@@ -52,7 +56,8 @@ import Icon from "@/components/Icon.vue";
 
 let messagesLength = 0;
 
-const privateRoom = ref("");
+const currentChat = ref("general");
+const privateRoom = ref(null);
 const userToAddPrivate = ref("");
 const messages = ref([]) as any;
 const usersOnline = ref([]) as any;
@@ -81,7 +86,7 @@ connection.onclose = function (event) {
 
 function sendMessage(message: string) {
   let event = "";
-  let roomId = "";
+  let roomId = null;
   if (privateRoom.value) {
     event = "private_message";
     roomId = privateRoom.value;
@@ -98,15 +103,16 @@ function sendMessage(message: string) {
   }
 }
 
+watch(
+  () => currentChat.value,
+  () => (isLoadingMessages.value = false)
+);
+
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
-  console.log(data);
-  if (data.lengthMessages && data.lengthMessages !== messagesLength) {
-    messagesLength = data.lengthMessages;
-  }
 
-  if (data.userToAddPrivat && data.userToAddPrivat !== userToAddPrivate.value) {
-    userToAddPrivate.value = data.userToAddPrivat;
+  if (data.messages && data.messages.event !== currentChat.value) {
+    return;
   }
 
   if (
@@ -115,6 +121,18 @@ connection.onmessage = function (event) {
     data.messages.roomId !== privateRoom.value
   ) {
     privateRoom.value = data.messages.roomId;
+  }
+
+  if (!privateRoom.value && data.messages && data.messages.roomId) {
+    return;
+  }
+
+  if (data.lengthMessages && data.lengthMessages !== messagesLength) {
+    messagesLength = data.lengthMessages;
+  }
+
+  if (data.userToAddPrivat && data.userToAddPrivat !== userToAddPrivate.value) {
+    userToAddPrivate.value = data.userToAddPrivat;
   }
 
   // if (Array.isArray(data.messages)) {
@@ -158,6 +176,7 @@ connection.onmessage = function (event) {
 
   if (messages.value.length === messagesLength) {
     isLoadingMessages.value = true;
+    messagesLength = 0;
   }
 };
 
@@ -173,7 +192,8 @@ function OnDragChatContainer(event: any) {
 }
 
 function goToPublicChat() {
-  privateRoom.value = "";
+  privateRoom.value = null;
+  currentChat.value = "general";
   messages.value = [];
   if (connection.readyState === 1) {
     connection.send(
@@ -234,6 +254,8 @@ function onScroll(event: any) {
 }
 
 function openRoomHandler(id: string) {
+  currentChat.value = "private";
+  messages.value = [];
   if (connection.readyState === 1) {
     connection.send(
       JSON.stringify({
@@ -242,7 +264,6 @@ function openRoomHandler(id: string) {
       })
     );
   }
-  messages.value = [];
 }
 // Computed ////////////////////////////////////////////////////////////////////////////////
 
