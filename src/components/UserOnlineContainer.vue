@@ -139,8 +139,7 @@ const filteredActiveOrNotUsers = computed(() => {
   box-shadow: 0px 0px 80px -28px rgba(0, 0, 0, 0.16);
   transition: 0.5s;
   left: -320px;
-
-  z-index: 9;
+  z-index: 100;
 
   &.active {
     left: 2px;
@@ -166,7 +165,7 @@ const filteredActiveOrNotUsers = computed(() => {
     color: rgb(222, 212, 212);
     opacity: 0.6;
     cursor: pointer;
-    width: fit-content;
+    width: 60%;
 
     &.online {
       color: rgb(25, 139, 25);

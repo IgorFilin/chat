@@ -2,14 +2,16 @@
   <div class="v-mainPage">
     <UserOnlineContainer
       @openRoom="openRoomHandler"
-      :usersOnline="usersOnline"
-    />
+      :usersOnline="usersOnline" />
     <div
       v-if="currentChat === 'private'"
-      class="v-mainPage__backAllChatContainer"
-    >
-      <button @click="goToPublicChat" class="v-mainPage__buttonBackAllChat">
-        <Icon id="arrow_back" color="white" />
+      class="v-mainPage__backAllChatContainer">
+      <button
+        @click="goToPublicChat"
+        class="v-mainPage__buttonBackAllChat">
+        <Icon
+          id="arrow_back"
+          color="white" />
         В общий чат
       </button>
       <div>В диалоге {{ userToAddPrivate }}</div>
@@ -21,53 +23,45 @@
       @dragstart.prevent
       @dragover.prevent="OnDragChatContainer"
       @dragleave.prevent="onDragClass = false"
-      @drop.prevent="OnDropChatContainer"
-    >
+      @drop.prevent="OnDropChatContainer">
       <Message
         v-if="isLoadingMessages"
         :key="message"
         v-for="message in messages"
-        v-bind="message"
-      />
-      <Loader v-else loaderFor="message" />
+        v-bind="message" />
+      <Loader
+        v-else
+        loaderFor="message" />
     </div>
     <InputSendButton @sendMessage="sendMessage" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from "@/store/auth_store.ts";
-import InputSendButton from "@/components/InputSendButton.vue";
-import router from "@/router/router";
+import { useAuthStore } from '@/store/auth_store.ts';
+import InputSendButton from '@/components/InputSendButton.vue';
+import router from '@/router/router';
 
-import {
-  onMounted,
-  onUnmounted,
-  ref,
-  computed,
-  onRenderTriggered,
-  onUpdated,
-  watch,
-} from "vue";
-import Message from "@/components/Message.vue";
-import UserOnlineContainer from "@/components/UserOnlineContainer.vue";
-import Loader from "@/components/Loader.vue";
-import Icon from "@/components/Icon.vue";
+import { Ref, onMounted, onUnmounted, ref, watch } from 'vue';
+import Message from '@/components/Message.vue';
+import UserOnlineContainer from '@/components/UserOnlineContainer.vue';
+import Loader from '@/components/Loader.vue';
+import Icon from '@/components/Icon.vue';
 
 let messagesLength = 0;
 
-const currentChat = ref("general");
-const privateRoom = ref(null);
-const userToAddPrivate = ref("");
-const messages = ref([]) as any;
-const usersOnline = ref([]) as any;
-const onDragClass = ref(false);
-const isLoadingMessages = ref(false) as any;
+const currentChat = ref('general') as Ref<string>;
+const privateRoomId = ref(null) as Ref<string | null>;
+const userToAddPrivate = ref('') as Ref<string>;
+const messages = ref([]) as Ref<Array<{}>>;
+const usersOnline = ref([]) as Ref<Array<{}>>;
+const onDragClass = ref(false) as Ref<boolean>;
+const isLoadingMessages = ref(false) as Ref<boolean>;
 
 const store = useAuthStore();
 
 if (!store.isAuth) {
-  router.push("/login");
+  router.push('/login');
 }
 
 // onRenderTriggered(({ key, target, type }) =>
@@ -76,7 +70,7 @@ if (!store.isAuth) {
 
 // WebScoket function  //////////////////////////////////////////////////////////////
 
-const connection = new WebSocket(`ws://localhost:3000?userID=${store.id}`);
+const connection = new WebSocket(`ws://${import.meta.env.VITE_APP_HOST}?userID=${store.id}`);
 
 connection.onopen = function () {};
 
@@ -85,15 +79,15 @@ connection.onclose = function (event) {
 };
 
 function sendMessage(message: string) {
-  let event = "";
+  let event = '';
   let roomId = null;
-  if (privateRoom.value) {
-    event = "private_message";
-    roomId = privateRoom.value;
+  if (privateRoomId.value) {
+    event = 'private_message';
+    roomId = privateRoomId.value;
   } else {
-    event = "message";
+    event = 'message';
   }
-  if (connection.readyState === 1 && message !== "") {
+  if (connection.readyState === 1 && message !== '') {
     connection.send(
       JSON.stringify({
         event,
@@ -103,10 +97,7 @@ function sendMessage(message: string) {
   }
 }
 
-watch(
-  () => currentChat.value,
-  () => (isLoadingMessages.value = false)
-);
+watch([() => currentChat.value, () => privateRoomId.value], () => (isLoadingMessages.value = false));
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
@@ -115,15 +106,11 @@ connection.onmessage = function (event) {
     return;
   }
 
-  if (
-    data.messages &&
-    data.messages.roomId &&
-    data.messages.roomId !== privateRoom.value
-  ) {
-    privateRoom.value = data.messages.roomId;
+  if (data.messages && data.messages.roomId && data.messages.roomId !== privateRoomId.value) {
+    privateRoomId.value = data.messages.roomId;
   }
 
-  if (!privateRoom.value && data.messages && data.messages.roomId) {
+  if (!privateRoomId.value && data.messages && data.messages.roomId) {
     return;
   }
 
@@ -158,14 +145,12 @@ connection.onmessage = function (event) {
     data.messages.message = URL.createObjectURL(blobMessage);
   }
 
-  if (typeof data.messages?.message === "string") {
+  if (typeof data.messages?.message === 'string') {
     const base64Image = data.messages.userPhoto;
-    const binaryData = Uint8Array.from(atob(base64Image), (c) =>
-      c.charCodeAt(0)
-    );
+    const binaryData = Uint8Array.from(atob(base64Image), (c) => c.charCodeAt(0));
     const blobImage = new Blob([binaryData]);
     data.messages.userPhoto = URL.createObjectURL(blobImage);
-    if (data.messages.roomId === privateRoom.value) {
+    if (data.messages.roomId === privateRoomId.value) {
       messages.value.unshift(data.messages);
     }
   }
@@ -192,13 +177,13 @@ function OnDragChatContainer(event: any) {
 }
 
 function goToPublicChat() {
-  privateRoom.value = null;
-  currentChat.value = "general";
+  privateRoomId.value = null;
+  currentChat.value = 'general';
   messages.value = [];
   if (connection.readyState === 1) {
     connection.send(
       JSON.stringify({
-        event: "all_messages_public",
+        event: 'all_messages_public',
         data: { id: store.id },
       })
     );
@@ -208,14 +193,14 @@ function goToPublicChat() {
 function OnDropChatContainer(e: any) {
   e.preventDefault();
 
-  let event = "";
-  let roomId = "";
+  let event = '';
+  let roomId = '';
 
-  if (privateRoom.value) {
-    event = "private_message";
-    roomId = privateRoom.value;
+  if (privateRoomId.value) {
+    event = 'private_message';
+    roomId = privateRoomId.value;
   } else {
-    event = "message";
+    event = 'message';
   }
 
   onDragClass.value = false;
@@ -223,7 +208,7 @@ function OnDropChatContainer(e: any) {
   const reader = new FileReader();
 
   if (file.size > 300 * 1024) {
-    store.toast("Изображение слишком большое. Максимальный размер - 300 КБ.");
+    store.toast('Изображение слишком большое. Максимальный размер - 300 КБ.');
     return;
   }
 
@@ -254,12 +239,12 @@ function onScroll(event: any) {
 }
 
 function openRoomHandler(id: string) {
-  currentChat.value = "private";
+  currentChat.value = 'private';
   messages.value = [];
   if (connection.readyState === 1) {
     connection.send(
       JSON.stringify({
-        event: "open_room",
+        event: 'open_room',
         data: { myId: store.id, userId: id },
       })
     );

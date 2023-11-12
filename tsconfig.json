@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
     "target": "esnext",
+    "types": ["vite/client"],
     "strict": true,
     "jsx": "preserve",
     "composite": true,
     "module": "ESNext",
-    "allowImportingTsExtensions": true,
     "moduleResolution": "bundler",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -20,13 +22,6 @@
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "tests/**/*.ts",
-    "tests/**/*.tsx",
-    "vite.config.ts"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx", "vite.config.ts"],
   "exclude": ["node_modules"]
 }
