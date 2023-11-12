@@ -4,7 +4,7 @@
       @openRoom="openRoomHandler"
       :usersOnline="usersOnline" />
     <div
-      v-if="currentChat === 'private'"
+      v-if="currentChatEvent === 'private_message'"
       class="v-mainPage__backAllChatContainer">
       <button
         @click="goToPublicChat"
@@ -26,13 +26,16 @@
       @drop.prevent="OnDropChatContainer">
       <Message
         v-if="isLoadingMessages"
-        :key="message"
-        v-for="message in messages"
+        :key="message.message.toString()"
+        v-for="(message, index) in messages"
         v-bind="message" />
       <Loader
         v-else
         loaderFor="message" />
     </div>
+    {{ currentChatEvent }}
+
+    {{ 'ID' + privateRoomId }}
     <InputSendButton @sendMessage="sendMessage" />
   </div>
 </template>
@@ -41,7 +44,6 @@
 import { useAuthStore } from '@/store/auth_store.ts';
 import InputSendButton from '@/components/InputSendButton.vue';
 import router from '@/router/router';
-
 import { Ref, onMounted, onUnmounted, ref, watch } from 'vue';
 import Message from '@/components/Message.vue';
 import UserOnlineContainer from '@/components/UserOnlineContainer.vue';
@@ -50,11 +52,11 @@ import Icon from '@/components/Icon.vue';
 
 let messagesLength = 0;
 
-const currentChat = ref('general') as Ref<string>;
+const currentChatEvent = ref('message') as Ref<'message' | 'private_message'>;
 const privateRoomId = ref(null) as Ref<string | null>;
 const userToAddPrivate = ref('') as Ref<string>;
-const messages = ref([]) as Ref<Array<{}>>;
-const usersOnline = ref([]) as Ref<Array<{}>>;
+const messages = ref([]) as Ref<Array<MessageType>>;
+const usersOnline = ref([]) as Ref<Array<UserTypeInUsersArrayType>>;
 const onDragClass = ref(false) as Ref<boolean>;
 const isLoadingMessages = ref(false) as Ref<boolean>;
 
@@ -68,46 +70,78 @@ if (!store.isAuth) {
 //   console.log({ key, target, type })
 // ); // Тест производительности
 
-// WebScoket function  //////////////////////////////////////////////////////////////
-
 const connection = new WebSocket(`ws://${import.meta.env.VITE_APP_HOST}?userID=${store.id}`);
 
-connection.onopen = function () {};
-
 connection.onclose = function (event) {
-  console.log(event);
+  store.toast('К сожалению соединение разорвано');
 };
 
 function sendMessage(message: string) {
-  let event = '';
-  let roomId = null;
-  if (privateRoomId.value) {
-    event = 'private_message';
-    roomId = privateRoomId.value;
-  } else {
-    event = 'message';
-  }
   if (connection.readyState === 1 && message !== '') {
     connection.send(
       JSON.stringify({
-        event,
-        data: { message: message.trim(), id: store.id, roomId },
+        event: currentChatEvent.value,
+        data: { message: message.trim(), id: store.id, roomId: privateRoomId.value },
       })
     );
   }
 }
 
-watch([() => currentChat.value, () => privateRoomId.value], () => (isLoadingMessages.value = false));
+function OnDropChatContainer(e: any) {
+  e.preventDefault();
+
+  onDragClass.value = false;
+  const file = e.dataTransfer.files[0];
+  const reader = new FileReader();
+
+  // if (file.type === 'text/plain' || file.type === 'application/pdf' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+  //   store.toast('К сожалению пока не поддерживаемый формат файлов');
+  //   return;
+  // }  // Добавить возможность сохранения текстовых файлов для клиентов
+
+  if (file.type !== 'image/webp' && file.type !== 'image/png') {
+    store.toast('К сожалению пока не поддерживаемый формат файлов (Доступны только изображения форматов png и webp)');
+    return;
+  }
+
+  if (file.size > 300 * 1024) {
+    store.toast('Изображение слишком большое. Максимальный размер - 300 КБ.');
+    return;
+  }
+
+  reader.onload = function (eventReader) {
+    const arrayBuffer = eventReader.target?.result;
+    if (connection.readyState === 1) {
+      connection.send(
+        JSON.stringify({
+          event: currentChatEvent.value,
+          data: {
+            message: Array.from(new Uint8Array(arrayBuffer as ArrayBuffer)),
+            id: store.id,
+            roomId: privateRoomId.value,
+          },
+        })
+      );
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// watch([() => currentChatEvent.value, () => privateRoomId.value], () => (isLoadingMessages.value = false));
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
 
-  if (data.messages && data.messages.event !== currentChat.value) {
+  if (data.openRoom) {
+    privateRoomId.value = data.messages.roomId;
+  }
+
+  if (data.messages && data.messages.event !== currentChatEvent.value) {
     return;
   }
 
   if (data.messages && data.messages.roomId && data.messages.roomId !== privateRoomId.value) {
-    privateRoomId.value = data.messages.roomId;
+    return;
   }
 
   if (!privateRoomId.value && data.messages && data.messages.roomId) {
@@ -121,23 +155,6 @@ connection.onmessage = function (event) {
   if (data.userToAddPrivat && data.userToAddPrivat !== userToAddPrivate.value) {
     userToAddPrivate.value = data.userToAddPrivat;
   }
-
-  // if (Array.isArray(data.messages)) {
-  //   const messagesData = data.messages.map((message: any) => {
-  //     const base64Image = message.userPhoto;
-  //     const binaryData = Uint8Array.from(atob(base64Image), (c) =>
-  //       c.charCodeAt(0)
-  //     );
-  //     const blobImage = new Blob([binaryData]);
-  //     return {
-  //       name: message.name,
-  //       userId: message.userId,
-  //       message: message.message,
-  //       userPhoto: URL.createObjectURL(blobImage),
-  //     };
-  //   });
-  //   messages.value = messagesData;
-  // }
 
   if (data.messages?.message && Array.isArray(data.messages.message)) {
     const bufferData = new Uint8Array(data.messages.message);
@@ -165,10 +182,6 @@ connection.onmessage = function (event) {
   }
 };
 
-///////////////////////////////////////////////////////////////////////////////////
-
-// Функции /////////////////////////////////////////////////////////////////////////
-
 function OnDragChatContainer(event: any) {
   event.preventDefault();
   if (!onDragClass.value) {
@@ -178,7 +191,7 @@ function OnDragChatContainer(event: any) {
 
 function goToPublicChat() {
   privateRoomId.value = null;
-  currentChat.value = 'general';
+  currentChatEvent.value = 'message';
   messages.value = [];
   if (connection.readyState === 1) {
     connection.send(
@@ -190,46 +203,6 @@ function goToPublicChat() {
   }
 }
 
-function OnDropChatContainer(e: any) {
-  e.preventDefault();
-
-  let event = '';
-  let roomId = '';
-
-  if (privateRoomId.value) {
-    event = 'private_message';
-    roomId = privateRoomId.value;
-  } else {
-    event = 'message';
-  }
-
-  onDragClass.value = false;
-  const file = e.dataTransfer.files[0];
-  const reader = new FileReader();
-
-  if (file.size > 300 * 1024) {
-    store.toast('Изображение слишком большое. Максимальный размер - 300 КБ.');
-    return;
-  }
-
-  reader.onload = function (eventReader) {
-    const arrayBuffer = eventReader.target?.result;
-    if (connection.readyState === 1) {
-      connection.send(
-        JSON.stringify({
-          event,
-          data: {
-            message: Array.from(new Uint8Array(arrayBuffer as ArrayBuffer)),
-            id: store.id,
-            roomId,
-          },
-        })
-      );
-    }
-  };
-  reader.readAsArrayBuffer(file);
-}
-
 function onScroll(event: any) {
   const container = event.target as HTMLElement; // Получаем контейнер, на который произошло событие скроллинга
   // Проверяем, достиг ли пользователь нижней границы контейнера
@@ -239,7 +212,7 @@ function onScroll(event: any) {
 }
 
 function openRoomHandler(id: string) {
-  currentChat.value = 'private';
+  currentChatEvent.value = 'private_message';
   messages.value = [];
   if (connection.readyState === 1) {
     connection.send(
@@ -250,14 +223,6 @@ function openRoomHandler(id: string) {
     );
   }
 }
-// Computed ////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////////////////
-
-// Жизненный цикл //////////////////////////////////////////////////////////////////////////
-onMounted(() => {
-  // connection.onopen();
-});
 
 onUnmounted(() => {
   connection.close();

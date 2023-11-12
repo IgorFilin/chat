@@ -2,31 +2,28 @@
   <div
     class="v-usersOnline"
     :class="{ active: isActiveUserContainer }"
-    @click="showPopup = false"
-  >
-    <div class="v-usersOnline__clickElem" @click="onActiveUserContainer" />
-    <input class="v-usersOnline__search" type="search" v-model="searchedUser" />
+    @click="showPopup = false">
+    <div
+      class="v-usersOnline__clickElem"
+      @click="onActiveUserContainer" />
+    <input
+      class="v-usersOnline__search"
+      type="search"
+      v-model="searchedUser" />
     <div class="v-usersOnline__usersContainer">
       <div
         class="v-usersOnline__user"
         :class="{ online: user.online, isOpenPopup: clikedUser.id === user.id }"
         @click="(event) => clickedUserHandler(event, user)"
         v-for="user in filteredActiveOrNotUsers"
-        :key="user.id"
-      >
+        :key="user.id">
         {{ user.name }}
         <div
-          v-if="
-            showPopup &&
-            clikedUser.id === user.id &&
-            clikedUser.id !== auth_store.id
-          "
-          class="v-usersOnline__popup"
-        >
+          v-if="showPopup && clikedUser.id === user.id && clikedUser.id !== auth_store.id"
+          class="v-usersOnline__popup">
           <div
             class="v-usersOnline__popupText"
-            @click="onPrivateRoomHandler($event, user.id)"
-          >
+            @click="onPrivateRoomHandler($event, user.id)">
             В личку
           </div>
         </div>
@@ -36,37 +33,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, Ref, onUpdated } from "vue";
-import { useUserStore } from "@/store/user_store.ts";
-import { useAuthStore } from "@/store/auth_store.ts";
-
-interface UserType {
-  id: string;
-  name: string;
-}
-
-interface UserTypeInUsersArrayType extends UserType {
-  online: string;
-}
+import { ref, computed, onMounted, watch, Ref } from 'vue';
+import { useUserStore } from '@/store/user_store.ts';
+import { useAuthStore } from '@/store/auth_store.ts';
 
 const emit = defineEmits();
 
 const user_store = useUserStore();
 const auth_store = useAuthStore();
 
-const searchedUser = ref("") as Ref<string>;
+const searchedUser = ref('') as Ref<string>;
 const isActiveUserContainer = ref(false) as Ref<boolean>;
 const users = ref([]) as Ref<Array<UserTypeInUsersArrayType>>;
 const showPopup = ref(false) as Ref<boolean>;
 const clikedUser = ref({
-  name: "",
-  id: "",
+  name: '',
+  id: '',
 }) as Ref<UserType>;
 
 const props = defineProps({
   usersOnline: {
     type: Array<UserTypeInUsersArrayType>,
-    desc: "Массив онлайн пользователей",
+    desc: 'Массив онлайн пользователей',
     default() {
       return [];
     },
@@ -86,7 +74,7 @@ function clickedUserHandler(event: MouseEvent, user: UserType) {
 function onPrivateRoomHandler(event: MouseEvent, id: string) {
   event.stopPropagation();
   showPopup.value = false;
-  emit("openRoom", id);
+  emit('openRoom', id);
   isActiveUserContainer.value = false;
 }
 
@@ -98,11 +86,7 @@ watch([() => props.usersOnline, () => user_store.users], () => {
   if (props.usersOnline) {
     users.value = user_store.users
       .map((user: UserType) => {
-        if (
-          props.usersOnline.some(
-            (userOnline: UserTypeInUsersArrayType) => userOnline.id === user.id
-          )
-        ) {
+        if (props.usersOnline.some((userOnline: UserTypeInUsersArrayType) => userOnline.id === user.id)) {
           return {
             online: true,
             name: user.name,
@@ -121,9 +105,7 @@ const filteredActiveOrNotUsers = computed(() => {
   if (!seachValue) {
     return users.value;
   }
-  return users.value.filter((user: UserType) =>
-    user.name.toLowerCase().trim().includes(seachValue)
-  );
+  return users.value.filter((user: UserType) => user.name.toLowerCase().trim().includes(seachValue));
 });
 </script>
 
@@ -190,7 +172,7 @@ const filteredActiveOrNotUsers = computed(() => {
   }
 
   .v-usersOnline__clickElem {
-    content: "";
+    content: '';
     display: block;
     height: 30px;
     width: 30px;

@@ -1,9 +1,15 @@
 <template>
-  <div class="v-message" :class="{ me: isMe(userId) }">
-    <img :src="userPhoto" class="v-message__messagePhoto" />
+  <div
+    class="v-message"
+    :class="{ me: isMe(userId) }">
+    <img
+      :src="userPhoto"
+      class="v-message__messagePhoto" />
     <div class="v-message__messageContentContainer">
       <div class="v-message__messageName">
-        <div class="v-message__name" v-if="!isMe(userId)">
+        <div
+          class="v-message__name"
+          v-if="!isMe(userId)">
           {{ name }}
         </div>
         <MyComponent :message="message" />
@@ -14,29 +20,24 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from "@/store/auth_store.ts";
-import MyComponent from "@/components/assetsComponent/Component.vue";
+import { useAuthStore } from '@/store/auth_store.ts';
+import MyComponent from '@/components/assetsComponent/Component.vue';
 
 const props = defineProps({
   userId: {
     type: String,
-    desc: "Id пользователя",
   },
   userPhoto: {
     type: String,
-    desc: "Аватарка пользователя",
   },
   name: {
     type: String,
-    desc: "Имя пользователя",
   },
   date: {
     type: String,
-    desc: "Дата сообщения",
   },
   message: {
-    type: String,
-    desc: "Сообщение",
+    type: [String, Array],
   },
 });
 
