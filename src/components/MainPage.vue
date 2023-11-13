@@ -27,15 +27,15 @@
       <Message
         v-if="isLoadingMessages"
         :key="message.message.toString()"
-        v-for="(message, index) in messages"
+        v-for="(message, index) in memoMessages"
         v-bind="message" />
       <Loader
         v-else
         loaderFor="message" />
     </div>
-    {{ currentChatEvent }}
-
-    {{ 'ID' + privateRoomId }}
+    <div>"isLoadingMessages"{{ isLoadingMessages }}</div>
+    <div>"messagesLength"{{ messagesLength }}</div>
+    <div>"messages.length"{{ messages.length }}</div>
     <InputSendButton @sendMessage="sendMessage" />
   </div>
 </template>
@@ -44,7 +44,7 @@
 import { useAuthStore } from '@/store/auth_store.ts';
 import InputSendButton from '@/components/InputSendButton.vue';
 import router from '@/router/router';
-import { Ref, onMounted, onUnmounted, ref, watch } from 'vue';
+import { Ref, computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import Message from '@/components/Message.vue';
 import UserOnlineContainer from '@/components/UserOnlineContainer.vue';
 import Loader from '@/components/Loader.vue';
@@ -127,7 +127,9 @@ function OnDropChatContainer(e: any) {
   reader.readAsArrayBuffer(file);
 }
 
-// watch([() => currentChatEvent.value, () => privateRoomId.value], () => (isLoadingMessages.value = false));
+watch([() => currentChatEvent.value, () => privateRoomId.value], () => (isLoadingMessages.value = false));
+
+const memoMessages = computed(() => messages.value);
 
 connection.onmessage = function (event) {
   const data = JSON.parse(event.data);
@@ -167,6 +169,7 @@ connection.onmessage = function (event) {
     const binaryData = Uint8Array.from(atob(base64Image), (c) => c.charCodeAt(0));
     const blobImage = new Blob([binaryData]);
     data.messages.userPhoto = URL.createObjectURL(blobImage);
+
     if (data.messages.roomId === privateRoomId.value) {
       messages.value.unshift(data.messages);
     }
@@ -176,9 +179,8 @@ connection.onmessage = function (event) {
     usersOnline.value = data.clients;
   }
 
-  if (messages.value.length === messagesLength) {
+  if ((data.lengthMessages && messages.value.length === messagesLength) || data.lengthMessages === 0) {
     isLoadingMessages.value = true;
-    messagesLength = 0;
   }
 };
 
