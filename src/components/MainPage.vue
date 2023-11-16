@@ -33,9 +33,9 @@
         v-else
         loaderFor="message" />
     </div>
-    <div>"isLoadingMessages"{{ isLoadingMessages }}</div>
+    <!-- <div>"isLoadingMessages"{{ isLoadingMessages }}</div>
     <div>"messagesLength"{{ messagesLength }}</div>
-    <div>"messages.length"{{ messages.length }}</div>
+    <div>"messages.length"{{ messages.length }}</div> -->
     <InputSendButton @sendMessage="sendMessage" />
   </div>
 </template>
@@ -127,7 +127,7 @@ function OnDropChatContainer(e: any) {
   reader.readAsArrayBuffer(file);
 }
 
-watch([() => currentChatEvent.value, () => privateRoomId.value], () => (isLoadingMessages.value = false));
+watch([() => currentChatEvent.value, privateRoomId.value], () => (isLoadingMessages.value = false));
 
 const memoMessages = computed(() => messages.value);
 
@@ -139,6 +139,7 @@ connection.onmessage = function (event) {
   }
 
   if (data.messages && data.messages.event !== currentChatEvent.value) {
+    console.log('ВНУТРИ', data.messages.event);
     return;
   }
 
@@ -150,8 +151,11 @@ connection.onmessage = function (event) {
     return;
   }
 
-  if (data.lengthMessages && data.lengthMessages !== messagesLength) {
+  if (data.lengthMessages === 0 || data.lengthMessages !== messagesLength) {
     messagesLength = data.lengthMessages;
+    // console.log('ВНУТРИ МЕССЕНДЖЕЙ');
+    // console.log('data.lengthMessages', data.lengthMessages);
+    // console.log('messagesLength', messagesLength);
   }
 
   if (data.userToAddPrivat && data.userToAddPrivat !== userToAddPrivate.value) {
