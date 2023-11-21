@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { LoginUserType, RegisterUserType, ResponseConfirmRegType, ResponseGetAllUsersType, ResponseLoginType, ResponseLogoutType, ResponseRegisterUserType } from './typesApi';
 
 const instance = axios.create({
-  baseURL: `https://${import.meta.env.VITE_APP_HOST}`,
+  baseURL: `${import.meta.env.VITE_APP_MODE === 'develop' ? 'http' : 'https'}://${import.meta.env.VITE_APP_HOST}`,
   withCredentials: true,
   credentials: 'include',
 } as any);
