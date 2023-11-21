@@ -70,7 +70,7 @@ if (!store.isAuth) {
 //   console.log({ key, target, type })
 // ); // Тест производительности
 
-const connection = new WebSocket(`ws://${import.meta.env.VITE_APP_HOST}?userID=${store.id}`);
+const connection = new WebSocket(`${import.meta.env.VITE_APP_PROTOCOL}://${import.meta.env.VITE_APP_HOST}?userID=${store.id}`);
 
 connection.onclose = function (event) {
   store.toast('К сожалению соединение разорвано');
